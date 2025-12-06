@@ -1,0 +1,105 @@
+package com.foodordering.order.domain.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Order Domain Model - Aggregate Root
+ */
+@Entity
+@Table(name = "orders")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private Long userId;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
+
+    @Column(length = 500)
+    private String deliveryAddress;
+
+    @Column(length = 20)
+    private String phoneNumber;
+
+    @Column(length = 1000)
+    private String notes;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<OrderItem> items = new ArrayList<>();
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (status == null) {
+            status = OrderStatus.PENDING;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    // Business methods
+    public void addItem(OrderItem item) {
+        items.add(item);
+        item.setOrder(this);
+        recalculateTotal();
+    }
+
+    public void removeItem(OrderItem item) {
+        items.remove(item);
+        item.setOrder(null);
+        recalculateTotal();
+    }
+
+    public void recalculateTotal() {
+        this.totalAmount = items.stream()
+                .map(OrderItem::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void confirm() {
+        this.status = OrderStatus.CONFIRMED;
+    }
+
+    public void cancel() {
+        if (this.status == OrderStatus.CONFIRMED || this.status == OrderStatus.PENDING) {
+            this.status = OrderStatus.CANCELLED;
+        } else {
+            throw new IllegalStateException("Cannot cancel order in status: " + this.status);
+        }
+    }
+
+    public boolean canBeCancelled() {
+        return this.status == OrderStatus.PENDING || this.status == OrderStatus.CONFIRMED;
+    }
+}

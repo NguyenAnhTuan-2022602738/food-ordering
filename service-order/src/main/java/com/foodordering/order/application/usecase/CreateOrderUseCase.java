@@ -1,0 +1,125 @@
+package com.foodordering.order.application.usecase;
+
+import com.foodordering.order.application.dto.*;
+import com.foodordering.order.domain.model.Order;
+import com.foodordering.order.domain.model.OrderItem;
+import com.foodordering.order.domain.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class CreateOrderUseCase {
+
+    private final OrderRepository orderRepository;
+    private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
+    private final com.foodordering.order.infrastructure.client.InventoryServiceClient inventoryServiceClient;
+
+    @Transactional
+    public OrderDto execute(CreateOrderDto request) {
+        log.info("[CREATE_ORDER] Creating order for user: {}", request.getUserId());
+        
+        Order order = Order.builder()
+                .userId(request.getUserId())
+                .email(request.getEmail())
+                .deliveryAddress(request.getDeliveryAddress())
+                .phoneNumber(request.getPhoneNumber())
+                .notes(request.getNotes())
+                .build();
+        
+        for (OrderItemRequest itemReq : request.getItems()) {
+            OrderItem item = OrderItem.builder()
+                    .menuItemId(itemReq.getMenuItemId())
+                    .menuItemName(itemReq.getMenuItemName() != null ? itemReq.getMenuItemName() : "Item " + itemReq.getMenuItemId())
+                    .quantity(itemReq.getQuantity())
+                    .price(itemReq.getPrice() != null ? itemReq.getPrice() : BigDecimal.valueOf(50000))
+                    .build();
+            
+            // Calculate subtotal manually as @PrePersist hasn't run yet
+            item.setSubtotal(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            
+            order.addItem(item);
+            
+            // Check Inventory
+            checkInventory(item);
+        }
+        
+        Order savedOrder = orderRepository.save(order);
+        log.info("[CREATE_ORDER] Order created with ID: {}", savedOrder.getId());
+        
+        // Publish event to RabbitMQ
+        try {
+            com.foodordering.order.application.dto.event.OrderConfirmedEvent event = com.foodordering.order.application.dto.event.OrderConfirmedEvent.builder()
+                    .orderId(savedOrder.getId())
+                    .userId(savedOrder.getUserId())
+                    .email(savedOrder.getEmail())
+                    .items(savedOrder.getItems().stream()
+                            .map(i -> new com.foodordering.order.application.dto.event.OrderConfirmedEvent.OrderItemEventDto(i.getMenuItemId(), i.getQuantity()))
+                            .collect(Collectors.toList()))
+                    .build();
+            
+            rabbitTemplate.convertAndSend("food-ordering-exchange", "order.confirmed", event);
+            log.info("[CREATE_ORDER] Published OrderConfirmedEvent for Order ID: {}", savedOrder.getId());
+        } catch (Exception e) {
+            log.error("[CREATE_ORDER] Failed to publish event", e);
+        }
+        
+        return toDto(savedOrder);
+    }
+
+    private OrderDto toDto(Order order) {
+        return OrderDto.builder()
+                .id(order.getId())
+                .userId(order.getUserId())
+                .totalAmount(order.getTotalAmount())
+                .status(order.getStatus().name())
+                .deliveryAddress(order.getDeliveryAddress())
+                .phoneNumber(order.getPhoneNumber())
+                .notes(order.getNotes())
+                .items(order.getItems().stream().map(this::toItemDto).collect(Collectors.toList()))
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .build();
+    }
+
+    private OrderItemDto toItemDto(OrderItem item) {
+        return OrderItemDto.builder()
+                .menuItemId(item.getMenuItemId())
+                .menuItemName(item.getMenuItemName())
+                .quantity(item.getQuantity())
+                .price(item.getPrice())
+                .subtotal(item.getSubtotal())
+                .build();
+    }
+
+    private void checkInventory(OrderItem item) {
+        try {
+            java.util.List<com.foodordering.order.infrastructure.client.InventoryServiceClient.RecipeDto> recipes = inventoryServiceClient.getRecipeByMenuItemId(item.getMenuItemId());
+            
+            for (com.foodordering.order.infrastructure.client.InventoryServiceClient.RecipeDto recipe : recipes) {
+                BigDecimal requiredQty = recipe.getQuantity().multiply(BigDecimal.valueOf(item.getQuantity()));
+                
+                com.foodordering.order.infrastructure.client.InventoryServiceClient.IngredientDto ingredient = inventoryServiceClient.getIngredientById(recipe.getIngredientId());
+                
+                if (ingredient == null) {
+                    log.warn("Ingredient {} not found, skipping check", recipe.getIngredientId());
+                    continue;
+                }
+                
+                if (ingredient.getQuantity().compareTo(requiredQty) < 0) {
+                    throw new RuntimeException("Insufficient inventory for item: " + item.getMenuItemName() + 
+                        " (Required: " + requiredQty + " " + ingredient.getName() + 
+                        ", Available: " + ingredient.getQuantity() + ")");
+                }
+            }
+        } catch (Exception e) {
+            log.error("Inventory check failed: {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}
