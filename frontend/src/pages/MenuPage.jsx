@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { Search, Filter, ShoppingBag, Star, Heart, ChefHat } from 'lucide-react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([])
@@ -39,7 +37,6 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       
       {/* Header Section */}
       <div className="bg-gray-900 text-white pt-32 pb-12 rounded-b-[50px] mb-12 relative overflow-hidden">
@@ -47,16 +44,16 @@ export default function MenuPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/90"></div>
         
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Delicious Menu</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Thực Đơn Hấp Dẫn</h1>
           <p className="text-gray-300 max-w-2xl mx-auto text-lg">
-            Discover a wide range of authentic dishes crafted with passion. From traditional Pho to modern fusion delights.
+            Khám phá các món ăn đa dạng được chế biến bằng cả tâm huyết. Từ Phở truyền thống đến các món ăn hiện đại.
           </p>
           
           {/* Search Bar */}
           <div className="mt-8 max-w-xl mx-auto relative">
             <input
               type="text"
-              placeholder="Search for food..."
+              placeholder="Tìm kiếm món ăn..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
@@ -77,7 +74,7 @@ export default function MenuPage() {
                 : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
             }`}
           >
-            All Dishes
+            Tất cả
           </button>
           {categories.map(cat => (
             <button
@@ -104,8 +101,8 @@ export default function MenuPage() {
             <div className="bg-orange-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <ChefHat size={40} className="text-orange-500" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">No items found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter</p>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Không tìm thấy món ăn nào</h3>
+            <p className="text-gray-500">Vui lòng thử tìm kiếm hoặc chọn danh mục khác</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -113,9 +110,13 @@ export default function MenuPage() {
               <div key={item.id} className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 group overflow-hidden border border-gray-100">
                 <div className="relative h-56 overflow-hidden">
                   <img 
-                    src={item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'} 
+                    src={item.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'} 
                     alt={item.name} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
@@ -136,12 +137,12 @@ export default function MenuPage() {
                   </div>
                   
                   <p className="text-gray-500 text-sm mb-6 line-clamp-2 h-10">
-                    {item.description || 'Delicious authentic dish made with fresh ingredients.'}
+                    {item.description || 'Món ăn ngon miệng với nguyên liệu tươi sạch.'}
                   </p>
                   
                   <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div>
-                      <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">Price</span>
+                      <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">Giá</span>
                       <div className="text-2xl font-bold text-gray-900">
                         {item.price?.toLocaleString('vi-VN')}
                         <span className="text-sm text-gray-500 font-normal align-top">đ</span>
@@ -153,7 +154,7 @@ export default function MenuPage() {
                       className="flex items-center gap-2 bg-gray-900 text-white px-5 py-3 rounded-xl hover:bg-orange-500 transition-colors duration-300 font-medium shadow-lg shadow-gray-900/20 hover:shadow-orange-500/30 transform active:scale-95"
                     >
                       <ShoppingBag size={18} />
-                      Add
+                      Thêm
                     </button>
                   </div>
                 </div>
@@ -162,8 +163,6 @@ export default function MenuPage() {
           </div>
         )}
       </div>
-      
-      <Footer />
     </div>
   )
 }

@@ -13,6 +13,8 @@ public class RabbitMQConfig {
 
     public static final String EXCHANGE = "food-ordering-exchange";
     public static final String ORDER_CONFIRMED_ROUTING_KEY = "order.confirmed";
+    public static final String PAYMENT_CONFIRMED_ROUTING_KEY = "payment.confirmed";
+    public static final String PAYMENT_CONFIRMED_QUEUE = "payment.confirmed.order-service";
 
     @Bean
     public TopicExchange exchange() {
@@ -40,6 +42,20 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(historyQueue).to(exchange).with(ORDER_CONFIRMED_ROUTING_KEY);
     }
 
+    /**
+     * Queue cho Payment Confirmed events
+     * Order-service lắng nghe để cập nhật paymentStatus
+     */
+    @Bean
+    public Queue paymentConfirmedQueue() {
+        return new Queue(PAYMENT_CONFIRMED_QUEUE, true);
+    }
+
+    @Bean
+    public Binding paymentConfirmedBinding(TopicExchange exchange) {
+        return BindingBuilder.bind(paymentConfirmedQueue()).to(exchange).with(PAYMENT_CONFIRMED_ROUTING_KEY);
+    }
+
     @Bean
     public MessageConverter converter() {
         return new Jackson2JsonMessageConverter();
@@ -52,3 +68,4 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 }
+

@@ -75,6 +75,7 @@ public class MenuController {
         menuItem.setName(request.getName());
         menuItem.setDescription(request.getDescription());
         menuItem.setPrice(request.getPrice());
+        menuItem.setImageUrl(request.getImageUrl());
         
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
@@ -84,6 +85,10 @@ public class MenuController {
         
         if (request.getAvailable() != null) {
             menuItem.setAvailable(request.getAvailable());
+        }
+        
+        if (request.getDisplayOrder() != null) {
+            menuItem.setDisplayOrder(request.getDisplayOrder());
         }
         
         MenuItem updated = menuItemRepository.save(menuItem);
@@ -117,8 +122,11 @@ public class MenuController {
         dto.setName(menuItem.getName());
         dto.setDescription(menuItem.getDescription());
         dto.setPrice(menuItem.getPrice());
+        dto.setImageUrl(menuItem.getImageUrl());
+        dto.setDisplayOrder(menuItem.getDisplayOrder());
         if (menuItem.getCategory() != null) {
             dto.setCategoryId(menuItem.getCategory().getId());
+            dto.setCategoryName(menuItem.getCategory().getName());
         }
         dto.setAvailable(menuItem.getAvailable() != null && menuItem.getAvailable());
         dto.setCreatedAt(menuItem.getCreatedAt());

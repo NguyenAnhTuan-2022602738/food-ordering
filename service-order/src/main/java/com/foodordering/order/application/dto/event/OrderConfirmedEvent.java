@@ -14,6 +14,7 @@ public class OrderConfirmedEvent {
     private Long orderId;
     private Long userId;
     private String email;
+    private String customerName;
     private List<OrderItemEventDto> items;
     
     @Data

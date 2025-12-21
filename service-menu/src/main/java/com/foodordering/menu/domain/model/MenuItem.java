@@ -37,7 +37,7 @@ public class MenuItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(length = 500)
+    @Column(length = 2000)
     private String imageUrl;
 
     @Column(nullable = false)

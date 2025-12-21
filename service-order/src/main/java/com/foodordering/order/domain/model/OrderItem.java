@@ -41,6 +41,9 @@ public class OrderItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
+    @Column(length = 2000)
+    private String imageUrl;
+
     @PrePersist
     @PreUpdate
     protected void calculateSubtotal() {

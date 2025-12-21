@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
     // Validation
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError('Mật khẩu phải có ít nhất 6 ký tự')
       setLoading(false)
       return
     }
@@ -37,18 +37,18 @@ export default function RegisterPage() {
       await register(formData)
       navigate('/menu')
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.')
+      setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
-          <p className="text-gray-600">Join us today and start ordering</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Đăng ký tài khoản</h2>
+          <p className="text-gray-600">Tham gia ngay hôm nay để đặt món dễ dàng</p>
         </div>
 
         {error && (
@@ -60,7 +60,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name
+              Họ và tên
             </label>
             <input
               type="text"
@@ -68,14 +68,14 @@ export default function RegisterPage() {
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-              placeholder="John Doe"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="Nguyễn Văn A"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
+              Email
             </label>
             <input
               type="email"
@@ -83,14 +83,14 @@ export default function RegisterPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number
+              Số điện thoại
             </label>
             <input
               type="tel"
@@ -98,14 +98,14 @@ export default function RegisterPage() {
               value={formData.phoneNumber}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-              placeholder="0123456789"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              placeholder="0912345678"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
+              Mật khẩu
             </label>
             <input
               type="password"
@@ -114,7 +114,7 @@ export default function RegisterPage() {
               onChange={handleChange}
               required
               minLength="6"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
               placeholder="••••••••"
             />
           </div>
@@ -122,17 +122,17 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
           >
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Đang tạo...' : 'Đăng ký'}
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="text-green-600 font-semibold hover:text-green-700">
-              Sign in
+            Đã có tài khoản?{' '}
+            <Link to="/login" className="text-orange-600 font-semibold hover:text-orange-700">
+              Đăng nhập
             </Link>
           </p>
         </div>

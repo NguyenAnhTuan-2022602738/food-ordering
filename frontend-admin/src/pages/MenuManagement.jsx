@@ -77,12 +77,12 @@ export default function MenuManagement() {
       loadData()
       handleCloseModal()
     } catch (error) {
-      alert('Failed to save menu item: ' + (error.response?.data?.message || error.message))
+      alert('Không thể lưu món ăn: ' + (error.response?.data?.message || error.message))
     }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this item?')) return
+    if (!confirm('Bạn có chắc chắn muốn xóa món này?')) return
 
     const token = getToken()
     try {
@@ -91,7 +91,7 @@ export default function MenuManagement() {
       })
       loadData()
     } catch (error) {
-      alert('Failed to delete: ' + error.message)
+      alert('Xóa thất bại: ' + error.message)
     }
   }
 
@@ -141,15 +141,15 @@ export default function MenuManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Menu Management</h1>
-          <p className="text-gray-500">Manage your food items, prices, and availability</p>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý món ăn</h1>
+          <p className="text-gray-500">Quản lý menu, giá cả và trạng thái phục vụ</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
         >
           <Plus size={20} />
-          Add New Item
+          Thêm món mới
         </button>
       </div>
 
@@ -159,7 +159,7 @@ export default function MenuManagement() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search menu items..."
+            placeholder="Tìm kiếm món ăn..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
@@ -172,7 +172,7 @@ export default function MenuManagement() {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 appearance-none bg-white"
           >
-            <option value="all">All Categories</option>
+            <option value="all">Tất cả danh mục</option>
             {categories.map(cat => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
@@ -197,7 +197,7 @@ export default function MenuManagement() {
                     ? 'bg-green-100 text-green-700' 
                     : 'bg-red-100 text-red-700'
                 }`}>
-                  {item.available ? 'Available' : 'Unavailable'}
+                  {item.available ? 'Đang bán' : 'Hết hàng'}
                 </span>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function MenuManagement() {
                   <h3 className="font-semibold text-gray-900 line-clamp-1">{item.name}</h3>
                   <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
                     <Tag size={14} />
-                    {categories.find(c => c.id === item.categoryId)?.name || 'Uncategorized'}
+                    {categories.find(c => c.id === item.categoryId)?.name || 'Chưa phân loại'}
                   </p>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -246,8 +246,8 @@ export default function MenuManagement() {
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No menu items found</h3>
-          <p className="text-gray-500 mt-1">Try adjusting your search or filters</p>
+          <h3 className="text-lg font-medium text-gray-900">Không tìm thấy món ăn</h3>
+          <p className="text-gray-500 mt-1">Thử điều chỉnh tìm kiếm hoặc bộ lọc</p>
         </div>
       )}
 
@@ -257,7 +257,7 @@ export default function MenuManagement() {
           <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <h2 className="text-xl font-bold text-gray-900">
-                {editingItem ? 'Edit Menu Item' : 'Add New Item'}
+                {editingItem ? 'Sửa món ăn' : 'Thêm món mới'}
               </h2>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
                 <XCircle size={24} />
@@ -266,20 +266,20 @@ export default function MenuManagement() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Tên món</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                  placeholder="e.g., Phở Bò Đặc Biệt"
+                  placeholder="Ví dụ: Phở Bò Đặc Biệt"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price (VND)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Giá (VND)</label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -295,14 +295,14 @@ export default function MenuManagement() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
                   <select
                     value={formData.categoryId}
                     onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                     required
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 bg-white"
                   >
-                    <option value="">Select...</option>
+                    <option value="">Chọn...</option>
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
@@ -311,18 +311,18 @@ export default function MenuManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
-                  placeholder="Describe the dish ingredients and taste..."
+                  placeholder="Mô tả thành phần, hương vị..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Link Ảnh (Tùy chọn)</label>
                 <div className="relative">
                   <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                   <input
@@ -344,7 +344,7 @@ export default function MenuManagement() {
                   className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300"
                 />
                 <label htmlFor="available" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                  Available for ordering
+                  Đang mở bán (Có sẵn)
                 </label>
               </div>
 
@@ -354,13 +354,13 @@ export default function MenuManagement() {
                   onClick={handleCloseModal}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-sm"
                 >
-                  {editingItem ? 'Update Item' : 'Create Item'}
+                  {editingItem ? 'Cập nhật' : 'Tạo mới'}
                 </button>
               </div>
             </form>

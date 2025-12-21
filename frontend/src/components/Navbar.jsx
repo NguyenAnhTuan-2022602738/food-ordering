@@ -86,9 +86,9 @@ export default function Navbar() {
   }
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Menu', path: '/menu' },
-    ...(user ? [{ name: 'My Orders', path: '/my-orders' }] : [])
+    { name: 'Trang chủ', path: '/' },
+    { name: 'Thực đơn', path: '/menu' },
+    ...(user ? [{ name: 'Đơn hàng', path: '/my-orders' }] : [])
   ]
 
   const isActive = (path) => location.pathname === path
@@ -151,18 +151,18 @@ export default function Navbar() {
                     )}
                   </button>
 
-                  {/* Notification Dropdown */}
+                {/* Notification Dropdown */}
                   {showNotifications && (
                     <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-in slide-in-from-top-2 z-50">
                       <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                        <h3 className="font-bold text-gray-800">Notifications</h3>
-                        <span className="text-xs text-gray-500">{notifications.length} total</span>
+                        <h3 className="font-bold text-gray-800">Thông báo</h3>
+                        <span className="text-xs text-gray-500">{notifications.length} tin mới</span>
                       </div>
                       <div className="max-h-96 overflow-y-auto custom-scrollbar">
                         {notifications.length === 0 ? (
                           <div className="p-8 text-center text-gray-500">
                             <Bell size={32} className="mx-auto mb-2 opacity-20" />
-                            <p>No notifications yet</p>
+                            <p>Chưa có thông báo nào</p>
                           </div>
                         ) : (
                           notifications.map((notif) => (
@@ -175,7 +175,7 @@ export default function Navbar() {
                                   <h4 className="font-semibold text-gray-800 text-sm">{notif.subject}</h4>
                                   <p className="text-xs text-gray-500 mt-1">{notif.message}</p>
                                   <span className="text-[10px] text-gray-400 mt-2 block">
-                                    {new Date(notif.createdAt).toLocaleString()}
+                                    {new Date(notif.createdAt).toLocaleString('vi-VN')}
                                   </span>
                                 </div>
                               </div>
@@ -210,7 +210,7 @@ export default function Navbar() {
                   <button 
                     onClick={handleLogout}
                     className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                    title="Logout"
+                    title="Đăng xuất"
                   >
                     <LogOut size={20} />
                   </button>
@@ -222,13 +222,13 @@ export default function Navbar() {
                   to="/login"
                   className="text-gray-600 hover:text-orange-500 font-medium transition-colors"
                 >
-                  Login
+                  Đăng nhập
                 </Link>
                 <Link 
                   to="/register"
                   className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2.5 rounded-full font-medium hover:shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  Sign Up
+                  Đăng ký
                 </Link>
               </div>
             )}
@@ -267,7 +267,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-between text-gray-600 py-2"
               >
-                <span>Cart ({cart.length})</span>
+                <span>Giỏ hàng ({cart.length})</span>
                 <ShoppingBag size={20} />
               </Link>
               <button 
@@ -277,7 +277,7 @@ export default function Navbar() {
                 }}
                 className="text-left text-red-500 font-medium py-2"
               >
-                Logout
+                Đăng xuất
               </button>
             </>
           ) : (
@@ -287,14 +287,14 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-center py-2.5 border border-gray-200 rounded-xl font-medium text-gray-700"
               >
-                Login
+                Đăng nhập
               </Link>
               <Link 
                 to="/register"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-center py-2.5 bg-orange-500 text-white rounded-xl font-medium"
               >
-                Sign Up
+                Đăng ký
               </Link>
             </div>
           )}

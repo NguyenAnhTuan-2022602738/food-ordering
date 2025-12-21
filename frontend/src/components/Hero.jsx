@@ -18,17 +18,17 @@ export default function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
               </span>
-              #1 Food Delivery Service
+              Dịch vụ giao đồ ăn số 1
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-[1.1]">
-              Taste the <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">Authentic</span> <br/>
-              Vietnamese Cuisine
+              Thưởng thức <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">tinh hoa</span> <br/>
+              Ẩm thực Việt Nam
             </h1>
 
             <p className="text-lg text-gray-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Experience the rich flavors of traditional Pho, Banh Mi, and more. 
-              Cooked with passion, delivered with care directly to your doorstep.
+              Trải nghiệm hương vị đậm đà của Phở, Bánh Mì và các món ăn truyền thống khác.
+              Được nấu bằng cả tâm huyết và giao đến tận cửa nhà bạn.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
@@ -36,13 +36,13 @@ export default function Hero() {
                 to="/menu" 
                 className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-bold text-lg shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
               >
-                Order Now <ArrowRight size={20} />
+                Đặt món ngay <ArrowRight size={20} />
               </Link>
               <Link 
                 to="/menu" 
                 className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 border border-gray-200 rounded-full font-bold text-lg hover:bg-gray-50 hover:border-orange-200 transition-all duration-300 flex items-center justify-center gap-2"
               >
-                View Menu
+                Xem thực đơn
               </Link>
             </div>
 
@@ -52,8 +52,8 @@ export default function Hero() {
                   <Clock size={20} />
                 </div>
                 <div className="text-left">
-                  <p className="font-bold text-gray-900">30 Mins</p>
-                  <p className="text-xs text-gray-500">Delivery</p>
+                  <p className="font-bold text-gray-900">30 Phút</p>
+                  <p className="text-xs text-gray-500">Giao nhanh</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export default function Hero() {
                 </div>
                 <div className="text-left">
                   <p className="font-bold text-gray-900">4.9/5</p>
-                  <p className="text-xs text-gray-500">Rating</p>
+                  <p className="text-xs text-gray-500">Đánh giá</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function Hero() {
                 </div>
                 <div className="text-left">
                   <p className="font-bold text-gray-900">100%</p>
-                  <p className="text-xs text-gray-500">Safe Food</p>
+                  <p className="text-xs text-gray-500">An toàn</p>
                 </div>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function Hero() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>
-                    <p className="font-bold text-gray-800">Tasty Burger</p>
+                    <p className="font-bold text-gray-800">Món ngon mỗi ngày</p>
                     <div className="flex text-yellow-400 text-xs">★★★★★</div>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ export default function Hero() {
               <div className="absolute top-10 -right-5 bg-white p-3 rounded-2xl shadow-xl animate-bounce duration-[4000ms]">
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🔥</span>
-                  <span className="font-bold text-orange-500">Hot & Spicy</span>
+                  <span className="font-bold text-orange-500">Nóng hổi</span>
                 </div>
               </div>
             </div>

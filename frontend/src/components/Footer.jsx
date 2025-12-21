@@ -18,7 +18,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-gray-400 leading-relaxed">
-              Bringing the authentic taste of Vietnam directly to your doorstep. Fresh ingredients, traditional recipes, and love in every bite.
+              Mang hương vị Việt đích thực đến tận cửa nhà bạn. Nguyên liệu tươi ngon, công thức truyền thống và tình yêu trong từng món ăn.
             </p>
             <div className="flex gap-4 pt-2">
               <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-orange-500 hover:text-white transition-all duration-300">
@@ -35,34 +35,34 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Quick Links</h3>
+            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Liên kết nhanh</h3>
             <ul className="space-y-3">
-              <li><Link to="/" className="hover:text-orange-500 transition-colors">Home</Link></li>
-              <li><Link to="/menu" className="hover:text-orange-500 transition-colors">Menu</Link></li>
-              <li><Link to="/about" className="hover:text-orange-500 transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-orange-500 transition-colors">Contact</Link></li>
-              <li><Link to="/faq" className="hover:text-orange-500 transition-colors">FAQ</Link></li>
+              <li><Link to="/" className="hover:text-orange-500 transition-colors">Trang chủ</Link></li>
+              <li><Link to="/menu" className="hover:text-orange-500 transition-colors">Thực đơn</Link></li>
+              <li><Link to="/about" className="hover:text-orange-500 transition-colors">Về chúng tôi</Link></li>
+              <li><Link to="/contact" className="hover:text-orange-500 transition-colors">Liên hệ</Link></li>
+              <li><Link to="/faq" className="hover:text-orange-500 transition-colors">Câu hỏi thường gặp</Link></li>
             </ul>
           </div>
 
           {/* Categories */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Categories</h3>
+            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Danh mục</h3>
             <ul className="space-y-3">
-              <li><Link to="/menu?category=pho" className="hover:text-orange-500 transition-colors">Traditional Pho</Link></li>
-              <li><Link to="/menu?category=banhmi" className="hover:text-orange-500 transition-colors">Banh Mi</Link></li>
-              <li><Link to="/menu?category=rice" className="hover:text-orange-500 transition-colors">Rice Dishes</Link></li>
-              <li><Link to="/menu?category=drinks" className="hover:text-orange-500 transition-colors">Drinks & Desserts</Link></li>
+              <li><Link to="/menu?category=pho" className="hover:text-orange-500 transition-colors">Phở Truyền Thống</Link></li>
+              <li><Link to="/menu?category=banhmi" className="hover:text-orange-500 transition-colors">Bánh Mì</Link></li>
+              <li><Link to="/menu?category=rice" className="hover:text-orange-500 transition-colors">Cơm</Link></li>
+              <li><Link to="/menu?category=drinks" className="hover:text-orange-500 transition-colors">Đồ uống & Tráng miệng</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Contact Us</h3>
+            <h3 className="text-white text-lg font-bold mb-6 font-poppins">Liên hệ</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="text-orange-500 mt-1" size={20} />
-                <span>123 Food Street, District 1, Ho Chi Minh City, Vietnam</span>
+                <span>123 Phố Ẩm Thực, Quận 1, TP.HCM, Việt Nam</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-orange-500" size={20} />
@@ -77,7 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} FoodOrder System. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} FoodOrder System. Đã đăng ký bản quyền.</p>
         </div>
       </div>
     </footer>

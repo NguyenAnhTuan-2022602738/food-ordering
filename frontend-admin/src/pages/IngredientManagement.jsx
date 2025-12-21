@@ -73,12 +73,12 @@ export default function IngredientManagement() {
       loadIngredients()
     } catch (error) {
       console.error('Failed to save ingredient:', error)
-      alert(error.response?.data?.message || 'Failed to save ingredient')
+      alert(error.response?.data?.message || 'Không thể lưu nguyên liệu')
     }
   }
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this ingredient?')) return
+    if (!window.confirm('Bạn có chắc chắn muốn xóa nguyên liệu này?')) return
     
     try {
       const token = getToken()
@@ -88,7 +88,7 @@ export default function IngredientManagement() {
       loadIngredients()
     } catch (error) {
       console.error('Failed to delete ingredient:', error)
-      alert('Failed to delete ingredient')
+      alert('Xóa nguyên liệu thất bại')
     }
   }
 
@@ -148,15 +148,15 @@ export default function IngredientManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Ingredient Management</h1>
-          <p className="text-gray-500">Track inventory, costs, and stock levels</p>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý nguyên liệu</h1>
+          <p className="text-gray-500">Theo dõi kho, chi phí và mức tồn kho</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
         >
           <Plus size={20} />
-          Add Ingredient
+          Thêm nguyên liệu
         </button>
       </div>
 
@@ -166,7 +166,7 @@ export default function IngredientManagement() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search ingredients..."
+            placeholder="Tìm kiếm nguyên liệu..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
@@ -180,12 +180,12 @@ export default function IngredientManagement() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock Level</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Cost</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên NL</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tồn kho</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đơn giá</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hạn dùng</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -226,7 +226,7 @@ export default function IngredientManagement() {
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-gray-100 text-gray-800'
                     }`}>
-                      {ingredient.active ? 'Active' : 'Inactive'}
+                      {ingredient.active ? 'Hoạt động' : 'Tạm ngưng'}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -252,8 +252,8 @@ export default function IngredientManagement() {
         {filteredIngredients.length === 0 && (
           <div className="text-center py-12">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No ingredients found</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new ingredient.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">Không tìm thấy nguyên liệu</h3>
+            <p className="mt-1 text-sm text-gray-500">Bắt đầu bằng cách thêm nguyên liệu mới.</p>
           </div>
         )}
       </div>
@@ -264,7 +264,7 @@ export default function IngredientManagement() {
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <h2 className="text-xl font-bold text-gray-900">
-                {editingIngredient ? 'Edit Ingredient' : 'Add New Ingredient'}
+                {editingIngredient ? 'Sửa nguyên liệu' : 'Thêm nguyên liệu mới'}
               </h2>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
                 <XCircle size={24} />
@@ -274,7 +274,7 @@ export default function IngredientManagement() {
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ingredient Name *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tên nguyên liệu *</label>
                   <input
                     type="text"
                     name="name"
@@ -282,12 +282,12 @@ export default function IngredientManagement() {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                    placeholder="e.g., Beef Sirloin"
+                    placeholder="Ví dụ: Thịt bò thăn"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Đơn vị *</label>
                   <div className="relative">
                     <Scale className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -297,13 +297,13 @@ export default function IngredientManagement() {
                       onChange={handleChange}
                       required
                       className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                      placeholder="kg, liters, pcs"
+                      placeholder="kg, lít, hộp..."
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Stock *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tồn kho hiện tại *</label>
                   <input
                     type="number"
                     step="0.01"
@@ -317,7 +317,7 @@ export default function IngredientManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Min Stock Level</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mức cảnh báo tối thiểu</label>
                   <div className="relative">
                     <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -327,13 +327,13 @@ export default function IngredientManagement() {
                       value={formData.minQuantity}
                       onChange={handleChange}
                       className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                      placeholder="Alert threshold"
+                      placeholder="Ngưỡng cảnh báo"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost Per Unit</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Đơn giá</label>
                   <div className="relative">
                     <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -349,7 +349,7 @@ export default function IngredientManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Hạn sử dụng</label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
@@ -363,14 +363,14 @@ export default function IngredientManagement() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     rows="3"
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
-                    placeholder="Additional details..."
+                    placeholder="Thông tin thêm..."
                   />
                 </div>
               </div>
@@ -385,7 +385,7 @@ export default function IngredientManagement() {
                   className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300"
                 />
                 <label htmlFor="active" className="ml-2 block text-sm font-medium text-gray-700 cursor-pointer select-none">
-                  Active Ingredient
+                  Kích hoạt
                 </label>
               </div>
 
@@ -395,13 +395,13 @@ export default function IngredientManagement() {
                   onClick={handleCloseModal}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-sm"
                 >
-                  {editingIngredient ? 'Update Ingredient' : 'Add Ingredient'}
+                  {editingIngredient ? 'Cập nhật' : 'Thêm mới'}
                 </button>
               </div>
             </form>

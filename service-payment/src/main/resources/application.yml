@@ -6,15 +6,34 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5435/food_ordering_payment
     username: postgres
-    password: postgres
+    password: 10112004
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
 logging:
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%level] [PAYMENT-SERVICE] %msg%n"
+
+# SePay Configuration - THAY THẾ BẰNG KEY CỦA BẠN
+sepay:
+  api-token: JUM2O6XZH3NKPYU6SASDF0OTQAGYIG3JRDKEUITCUJGA09ZRKJBRXO4FDHVIRCCZ
+  bank-account-number: 7280010112004
+  bank-code: MB  # MB, VCB, TCB, ACB, etc.
+  account-name: NGUYEN ANH TUAN
+  # Sandbox: https://my.dev.sepay.vn | Production: https://my.sepay.vn
+  api-url: https://my.sepay.vn/userapi
+  # URL frontend để redirect sau thanh toán
+  frontend-url: http://localhost:3000
+

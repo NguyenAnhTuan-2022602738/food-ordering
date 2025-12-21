@@ -29,7 +29,7 @@ export default function LoginPage() {
       await login(formData)
       navigate('/menu')
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password')
+      setError(err.response?.data?.message || 'Email hoặc mật khẩu không đúng')
     } finally {
       setLoading(false)
     }
@@ -46,8 +46,8 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-gradient-to-tr from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-orange-500/30 transform rotate-3">
             <ChefHat size={32} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-500">Sign in to continue your food journey</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Chào mừng trở lại</h2>
+          <p className="text-gray-500">Đăng nhập để khám phá thế giới ẩm thực</p>
         </div>
 
         {error && (
@@ -60,7 +60,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Email Address
+              Địa chỉ Email
             </label>
             <div className="relative">
               <input
@@ -79,7 +79,7 @@ export default function LoginPage() {
 
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
-              Password
+              Mật khẩu
             </label>
             <div className="relative">
               <input
@@ -95,7 +95,7 @@ export default function LoginPage() {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             </div>
             <div className="text-right mt-2">
-              <a href="#" className="text-sm text-orange-500 font-semibold hover:text-orange-600">Forgot Password?</a>
+              <a href="#" className="text-sm text-orange-500 font-semibold hover:text-orange-600">Quên mật khẩu?</a>
             </div>
           </div>
 
@@ -106,11 +106,11 @@ export default function LoginPage() {
           >
             {loading ? (
               <>
-                <Loader className="animate-spin" size={20} /> Signing in...
+                <Loader className="animate-spin" size={20} /> Đang xử lý...
               </>
             ) : (
               <>
-                Sign In <ArrowRight size={20} />
+                Đăng nhập <ArrowRight size={20} />
               </>
             )}
           </button>
@@ -118,9 +118,9 @@ export default function LoginPage() {
 
         <div className="mt-8 text-center">
           <p className="text-gray-500">
-            Don't have an account?{' '}
+            Chưa có tài khoản?{' '}
             <Link to="/register" className="text-orange-600 font-bold hover:text-orange-700 hover:underline">
-              Create Account
+              Đăng ký ngay
             </Link>
           </p>
         </div>

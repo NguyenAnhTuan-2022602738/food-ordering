@@ -77,6 +77,15 @@ public class OrderController {
         OrderStatus oldStatus = order.getStatus();
         OrderStatus newStatus = OrderStatus.valueOf(payload.get("status"));
         
+        // SEPAY: Bắt buộc thanh toán trước khi chuyển sang PREPARING trở đi
+        if ("SEPAY".equals(order.getPaymentMethod()) && !"SUCCESS".equals(order.getPaymentStatus())) {
+            // Chỉ cho phép CONFIRMED và CANCELLED nếu chưa thanh toán
+            if (newStatus == OrderStatus.PREPARING || newStatus == OrderStatus.DELIVERING || newStatus == OrderStatus.COMPLETED) {
+                log.warn("[ORDER-CONTROLLER] Order {} - SEPAY unpaid, blocking status change to {}", orderId, newStatus);
+                throw new RuntimeException("Đơn hàng chuyển khoản chưa được thanh toán. Vui lòng đợi khách hàng thanh toán trước khi xử lý.");
+            }
+        }
+        
         // Logic trừ/hoàn nguyên liệu (Event-Driven)
         if (oldStatus == OrderStatus.PENDING && newStatus == OrderStatus.CONFIRMED) {
             // PENDING -> CONFIRMED: Gửi sự kiện để trừ nguyên liệu (Async)
@@ -104,6 +113,12 @@ public class OrderController {
             // CONFIRMED -> CANCELLED: Hoàn lại nguyên liệu (TODO: Implement Async Restore)
             log.info("[ORDER-CONTROLLER] Cancelling confirmed order {} - sending restore event (Not Implemented yet)", orderId);
             // restoreInventoryForOrder(order); // Commented out for now
+        }
+        
+        // COD: Auto-mark as paid when order is completed
+        if (newStatus == OrderStatus.COMPLETED && "COD".equals(order.getPaymentMethod())) {
+            order.setPaymentStatus("SUCCESS");
+            log.info("[ORDER-CONTROLLER] COD Order {} completed - auto-marked as paid", orderId);
         }
         
         order.setStatus(newStatus);
@@ -170,6 +185,87 @@ public class OrderController {
         }
     }
     
+    @PutMapping("/{orderId}/confirm-receipt")
+    @Operation(summary = "Người dùng xác nhận đã nhận hàng")
+    public ResponseEntity<OrderDto> confirmReceipt(@PathVariable Long orderId) {
+        log.info("[ORDER-CONTROLLER] User confirming receipt for order {}", orderId);
+        
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+        
+        // Cho phép xác nhận khi trạng thái là DELIVERING
+        if (order.getStatus() != OrderStatus.DELIVERING) {
+             throw new RuntimeException("Chỉ có thể xác nhận nhận hàng khi đơn hàng đang được giao (Delivering).");
+        }
+        
+        order.setStatus(OrderStatus.COMPLETED);
+        
+        // COD: Tự động cập nhật thanh toán thành công
+        if ("COD".equals(order.getPaymentMethod())) {
+            order.setPaymentStatus("SUCCESS");
+        }
+        
+        Order updated = orderRepository.save(order);
+        
+        // Gửi sự kiện realtime
+        try {
+            Map<String, Object> statusEvent = new java.util.HashMap<>();
+            statusEvent.put("type", "ORDER_STATUS_CHANGED");
+            statusEvent.put("orderId", updated.getId());
+            statusEvent.put("userId", updated.getUserId());
+            statusEvent.put("status", updated.getStatus().name());
+            statusEvent.put("updatedAt", updated.getUpdatedAt().toString());
+            
+            rabbitTemplate.convertAndSend(
+                com.foodordering.order.infrastructure.config.RabbitMQConfig.EXCHANGE, 
+                "order.status.changed", 
+                statusEvent
+            );
+            log.info("[ORDER-CONTROLLER] Published order.status.changed event for Order {}", updated.getId());
+        } catch (Exception e) {
+            log.error("[ORDER-CONTROLLER] Failed to publish status change event", e);
+        }
+        
+        return ResponseEntity.ok(convertToDto(updated));
+    }
+
+    @PostMapping("/{orderId}/cancel-order")
+    @Operation(summary = "Người dùng hủy đơn hàng")
+    public ResponseEntity<OrderDto> cancelOrder(@PathVariable Long orderId) {
+        log.info("[ORDER-CONTROLLER] User cancelling order {}", orderId);
+        
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+        
+        // Chỉ cho phép hủy khi PENDING hoặc CONFIRMED
+        if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.CONFIRMED) {
+             throw new RuntimeException("Không thể hủy đơn hàng khi đã bắt đầu chuẩn bị hoặc đang giao.");
+        }
+        
+        order.setStatus(OrderStatus.CANCELLED);
+        Order updated = orderRepository.save(order);
+        
+        // Gửi sự kiện realtime
+        try {
+            Map<String, Object> statusEvent = new java.util.HashMap<>();
+            statusEvent.put("type", "ORDER_STATUS_CHANGED");
+            statusEvent.put("orderId", updated.getId());
+            statusEvent.put("userId", updated.getUserId());
+            statusEvent.put("status", updated.getStatus().name());
+            statusEvent.put("updatedAt", updated.getUpdatedAt().toString());
+            
+            rabbitTemplate.convertAndSend(
+                com.foodordering.order.infrastructure.config.RabbitMQConfig.EXCHANGE, 
+                "order.status.changed", 
+                statusEvent
+            );
+        } catch (Exception e) {
+            log.error("Failed to publish status change event", e);
+        }
+        
+        return ResponseEntity.ok(convertToDto(updated));
+    }
+
     /**
      * Hoàn lại nguyên liệu cho đơn hàng
      */
@@ -223,6 +319,7 @@ public class OrderController {
                     .quantity(item.getQuantity())
                     .price(item.getPrice())
                     .subtotal(item.getSubtotal())
+                    .imageUrl(item.getImageUrl())
                     .build())
                 .collect(Collectors.toList());
             dto.setItems(itemDtos);
@@ -232,6 +329,9 @@ public class OrderController {
         dto.setStatus(order.getStatus().name());
         dto.setDeliveryAddress(order.getDeliveryAddress());
         dto.setPhoneNumber(order.getPhoneNumber());
+        dto.setNotes(order.getNotes());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setPaymentStatus(order.getPaymentStatus());
         dto.setCreatedAt(order.getCreatedAt());
         dto.setUpdatedAt(order.getUpdatedAt());
         return dto;

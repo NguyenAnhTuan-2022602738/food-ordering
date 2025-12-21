@@ -85,14 +85,14 @@ export default function RecipeManagement() {
     e.preventDefault()
     
     if (!selectedMenuItem) {
-      alert('Please select a menu item first')
+      alert('Vui lòng chọn món ăn trước')
       return
     }
 
     const validItems = recipeItems.filter(item => item.ingredientId && item.quantity)
     
     if (validItems.length === 0) {
-      alert('Please add at least one ingredient')
+      alert('Vui lòng thêm ít nhất một nguyên liệu')
       return
     }
 
@@ -111,11 +111,11 @@ export default function RecipeManagement() {
         headers: { Authorization: `Bearer ${token}` }
       })
 
-      alert('Recipe saved successfully!')
+      alert('Lưu công thức thành công!')
       loadRecipe(selectedMenuItem.id)
     } catch (error) {
       console.error('Failed to save recipe:', error)
-      alert(error.response?.data?.message || 'Failed to save recipe')
+      alert(error.response?.data?.message || 'Lưu thất bại')
     }
   }
 
@@ -135,8 +135,8 @@ export default function RecipeManagement() {
     <div className="space-y-6 h-[calc(100vh-100px)] flex flex-col">
       {/* Header */}
       <div className="flex-none">
-        <h1 className="text-2xl font-bold text-gray-900">Recipe Management</h1>
-        <p className="text-gray-500">Define ingredients and quantities for each menu item</p>
+        <h1 className="text-2xl font-bold text-gray-900">Quản lý công thức</h1>
+        <p className="text-gray-500">Định lượng nguyên liệu cho từng món ăn</p>
       </div>
 
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
@@ -147,7 +147,7 @@ export default function RecipeManagement() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
-                placeholder="Search menu items..."
+                placeholder="Tìm món ăn..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-sm"
@@ -159,7 +159,7 @@ export default function RecipeManagement() {
             {filteredMenuItems.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Utensils className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                <p className="text-sm">No items found</p>
+                <p className="text-sm">Không tìm thấy món ăn</p>
               </div>
             ) : (
               filteredMenuItems.map((item) => (
@@ -174,7 +174,7 @@ export default function RecipeManagement() {
                 >
                   <div>
                     <div className="font-medium text-sm">{item.name}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{item.categoryName || 'Uncategorized'}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">{item.categoryName || 'Chưa phân loại'}</div>
                   </div>
                   {selectedMenuItem?.id === item.id && (
                     <ArrowRight size={16} className="text-orange-500" />
@@ -192,9 +192,9 @@ export default function RecipeManagement() {
               <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-6">
                 <ChefHat className="w-10 h-10 text-orange-400" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Select a Menu Item</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Chọn một món ăn</h3>
               <p className="text-gray-500 max-w-md">
-                Choose a dish from the list on the left to view or edit its recipe and ingredients.
+                Chọn món ăn từ danh sách bên trái để xem hoặc chỉnh sửa công thức.
               </p>
             </div>
           ) : (
@@ -207,7 +207,7 @@ export default function RecipeManagement() {
                       {selectedMenuItem.categoryName}
                     </span>
                   </h2>
-                  <p className="text-sm text-gray-500 mt-1">Configure ingredients for this dish</p>
+                  <p className="text-sm text-gray-500 mt-1">Cấu hình nguyên liệu cho món này</p>
                 </div>
                 <button
                   type="button"
@@ -215,7 +215,7 @@ export default function RecipeManagement() {
                   className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-medium"
                 >
                   <Plus size={16} />
-                  Add Ingredient
+                  Thêm nguyên liệu
                 </button>
               </div>
 
@@ -224,15 +224,15 @@ export default function RecipeManagement() {
                   {recipeItems.length === 0 ? (
                     <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
                       <AlertCircle className="mx-auto h-10 w-10 text-gray-300 mb-3" />
-                      <p className="text-gray-500 font-medium">No ingredients added yet</p>
-                      <p className="text-sm text-gray-400 mt-1">Add ingredients to define the recipe</p>
+                      <p className="text-gray-500 font-medium">Chưa có nguyên liệu nào</p>
+                      <p className="text-sm text-gray-400 mt-1">Thêm nguyên liệu để định nghĩa công thức</p>
                     </div>
                   ) : (
                     recipeItems.map((item, index) => (
                       <div key={index} className="flex gap-4 items-start bg-gray-50 p-4 rounded-xl border border-gray-100 group hover:border-orange-200 transition-colors">
                         <div className="flex-1 space-y-1">
                           <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                            <Utensils size={12} /> Ingredient
+                            <Utensils size={12} /> Nguyên liệu
                           </label>
                           <select
                             value={item.ingredientId}
@@ -240,7 +240,7 @@ export default function RecipeManagement() {
                             required
                             className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-sm"
                           >
-                            <option value="">Select ingredient...</option>
+                            <option value="">Chọn nguyên liệu...</option>
                             {ingredients.map((ing) => (
                               <option key={ing.id} value={ing.id}>
                                 {ing.name} ({ing.unit})
@@ -251,7 +251,7 @@ export default function RecipeManagement() {
 
                         <div className="w-32 space-y-1">
                           <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                            <Scale size={12} /> Quantity
+                            <Scale size={12} /> Số lượng
                           </label>
                           <input
                             type="number"
@@ -266,14 +266,14 @@ export default function RecipeManagement() {
 
                         <div className="flex-1 space-y-1">
                           <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
-                            <FileText size={12} /> Notes
+                            <FileText size={12} /> Ghi chú
                           </label>
                           <input
                             type="text"
                             value={item.notes}
                             onChange={(e) => updateIngredient(index, 'notes', e.target.value)}
                             className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-sm"
-                            placeholder="e.g., Sliced thinly"
+                            placeholder="Ví dụ: Cắt lát mỏng"
                           />
                         </div>
 
@@ -298,7 +298,7 @@ export default function RecipeManagement() {
                   className="flex items-center gap-2 bg-orange-600 text-white px-6 py-2.5 rounded-lg hover:bg-orange-700 transition-colors shadow-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save size={18} />
-                  Save Recipe
+                  Lưu công thức
                 </button>
               </div>
             </div>

@@ -38,6 +38,8 @@ public class GetUserOrdersUseCase {
                 .deliveryAddress(order.getDeliveryAddress())
                 .phoneNumber(order.getPhoneNumber())
                 .notes(order.getNotes())
+                .paymentMethod(order.getPaymentMethod())
+                .paymentStatus(order.getPaymentStatus())
                 .items(order.getItems().stream().map(this::toItemDto).collect(Collectors.toList()))
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
@@ -51,6 +53,7 @@ public class GetUserOrdersUseCase {
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .subtotal(item.getSubtotal())
+                .imageUrl(item.getImageUrl())
                 .build();
     }
 }

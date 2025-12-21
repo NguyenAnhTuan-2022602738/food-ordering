@@ -51,12 +51,12 @@ export default function CategoryManagement() {
       loadCategories()
       handleCloseModal()
     } catch (error) {
-      alert('Failed to save category: ' + (error.response?.data?.message || error.message))
+      alert('Không thể lưu danh mục: ' + (error.response?.data?.message || error.message))
     }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure? This may affect menu items in this category.')) return
+    if (!confirm('Bạn có chắc chắn? Việc này có thể ảnh hưởng đến các món ăn trong danh mục.')) return
 
     const token = getToken()
     try {
@@ -65,7 +65,7 @@ export default function CategoryManagement() {
       })
       loadCategories()
     } catch (error) {
-      alert('Failed to delete: ' + error.message)
+      alert('Xóa thất bại: ' + error.message)
     }
   }
 
@@ -103,15 +103,15 @@ export default function CategoryManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Category Management</h1>
-          <p className="text-gray-500">Organize your menu structure</p>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý danh mục</h1>
+          <p className="text-gray-500">Tổ chức cấu trúc menu của bạn</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
         >
           <Plus size={20} />
-          Add Category
+          Thêm danh mục
         </button>
       </div>
 
@@ -121,7 +121,7 @@ export default function CategoryManagement() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Search categories..."
+            placeholder="Tìm kiếm danh mục..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
@@ -140,13 +140,13 @@ export default function CategoryManagement() {
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                 category.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
               }`}>
-                {category.active ? 'Active' : 'Inactive'}
+                {category.active ? 'Hoạt động' : 'Đã ẩn'}
               </span>
             </div>
             
             <h3 className="text-lg font-bold text-gray-900 mb-2">{category.name}</h3>
             <p className="text-gray-500 text-sm mb-6 line-clamp-2 h-10">
-              {category.description || 'No description provided'}
+              {category.description || 'Chưa có mô tả'}
             </p>
             
             <div className="flex gap-2 pt-4 border-t border-gray-50">
@@ -154,13 +154,13 @@ export default function CategoryManagement() {
                 onClick={() => handleEdit(category)}
                 className="flex-1 flex items-center justify-center gap-2 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm font-medium"
               >
-                <Edit size={16} /> Edit
+                <Edit size={16} /> Sửa
               </button>
               <button
                 onClick={() => handleDelete(category.id)}
                 className="flex-1 flex items-center justify-center gap-2 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
               >
-                <Trash2 size={16} /> Delete
+                <Trash2 size={16} /> Xóa
               </button>
             </div>
           </div>
@@ -172,8 +172,8 @@ export default function CategoryManagement() {
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <Folder className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No categories found</h3>
-          <p className="text-gray-500 mt-1">Create a new category to get started</p>
+          <h3 className="text-lg font-medium text-gray-900">Không tìm thấy danh mục</h3>
+          <p className="text-gray-500 mt-1">Tạo danh mục mới để bắt đầu</p>
         </div>
       )}
 
@@ -183,7 +183,7 @@ export default function CategoryManagement() {
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <h2 className="text-xl font-bold text-gray-900">
-                {editingCategory ? 'Edit Category' : 'Add New Category'}
+                {editingCategory ? 'Sửa danh mục' : 'Thêm danh mục mới'}
               </h2>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
                 <XCircle size={24} />
@@ -193,7 +193,7 @@ export default function CategoryManagement() {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category Name *
+                  Tên danh mục *
                 </label>
                 <input
                   type="text"
@@ -201,20 +201,20 @@ export default function CategoryManagement() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
-                  placeholder="e.g., Main Course"
+                  placeholder="Ví dụ: Món Chính"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
+                  Mô tả
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 resize-none"
-                  placeholder="Describe this category..."
+                  placeholder="Mô tả danh mục này..."
                 />
               </div>
 
@@ -227,7 +227,7 @@ export default function CategoryManagement() {
                   className="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300"
                 />
                 <label htmlFor="active" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                  Active (Visible to customers)
+                  Hoạt động (Hiển thị cho khách)
                 </label>
               </div>
 
@@ -237,13 +237,13 @@ export default function CategoryManagement() {
                   onClick={handleCloseModal}
                   className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-sm"
                 >
-                  {editingCategory ? 'Update' : 'Create'}
+                  {editingCategory ? 'Cập nhật' : 'Tạo mới'}
                 </button>
               </div>
             </form>

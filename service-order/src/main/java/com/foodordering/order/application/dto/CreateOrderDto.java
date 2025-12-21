@@ -24,5 +24,7 @@ public class CreateOrderDto {
     
     private String deliveryAddress;
     private String phoneNumber;
+    private String customerName;
     private String notes;
+    private String paymentMethod;  // COD, SEPAY
 }

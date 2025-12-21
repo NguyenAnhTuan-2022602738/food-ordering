@@ -21,4 +21,5 @@ public class OrderItemRequest {
     
     private String menuItemName;
     private java.math.BigDecimal price;
+    private String imageUrl;
 }

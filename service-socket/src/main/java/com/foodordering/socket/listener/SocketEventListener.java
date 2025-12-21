@@ -48,31 +48,103 @@ public class SocketEventListener {
             if (map.containsKey("orderId")) {
                 Long orderId = ((Number) map.get("orderId")).longValue();
                 
+                // Lấy customerName, nếu không có thì dùng email hoặc "Khách hàng"
+                String customerName = (String) map.get("customerName");
+                if (customerName == null || customerName.isEmpty()) {
+                    customerName = (String) map.get("email");
+                    if (customerName == null || customerName.isEmpty()) {
+                        customerName = "Khách hàng";
+                    }
+                }
+                
+                // Handle PAYMENT_SUCCESS - Gửi thông báo thanh toán thành công cho User
+                if ("PAYMENT_SUCCESS".equals(type)) {
+                    if (map.containsKey("userId")) {
+                        String userId = String.valueOf(map.get("userId"));
+                        Map<String, Object> userNotification = new java.util.HashMap<>(notification);
+                        userNotification.put("type", "PAYMENT_SUCCESS");
+                        userNotification.put("subject", "Thanh toán thành công 🎉");
+                        userNotification.put("message", map.getOrDefault("message", "Đơn hàng #" + orderId + " đã được thanh toán thành công!"));
+                        userNotification.put("createdAt", new java.util.Date());
+                        
+                        messagingTemplate.convertAndSend("/topic/user/" + userId, userNotification);
+                        log.info("   -> Pushed PAYMENT_SUCCESS to user {}", userId);
+                    }
+                    return; // Đã xử lý xong, không cần xử lý tiếp
+                }
+                
                 if ("ORDER_STATUS_CHANGED".equals(type)) {
                     String status = (String) map.get("status");
-                    subject = "Order #" + orderId + " Updated";
-                    message = "Order status changed to " + status;
+                    subject = "Đơn hàng #" + orderId + " đã cập nhật";
+                    message = "Trạng thái đơn hàng đã chuyển sang " + getStatusDisplay(status);
+                    
+                    // Gửi thông báo cho User khi status thay đổi (từ CONFIRMED trở đi)
+                    if (map.containsKey("userId") && shouldNotifyUser(status)) {
+                        String userId = String.valueOf(map.get("userId"));
+                        Map<String, Object> userNotification = new java.util.HashMap<>(notification);
+                        userNotification.put("subject", "Đơn hàng của bạn đã được cập nhật");
+                        userNotification.put("message", message);
+                        userNotification.put("createdAt", new java.util.Date());
+                        
+                        messagingTemplate.convertAndSend("/topic/user/" + userId, userNotification);
+                        log.info("   -> Pushed status update to user {}", userId);
+                    }
+                    
+                    // Gửi cho Admin
+                    notification.put("subject", subject);
+                    notification.put("message", message);
+                    notification.put("createdAt", new java.util.Date());
+                    messagingTemplate.convertAndSend("/topic/admin/notifications", notification);
+                    log.info("   -> Broadcasted status update to admin");
+                    
                 } else {
-                    subject = "New Order #" + orderId;
-                    message = "New order received from user " + map.get("userId");
+                    // Đơn hàng mới - CHỈ gửi cho Admin
+                    subject = "Đơn hàng mới #" + orderId;
+                    message = customerName + " vừa đặt đơn hàng mới";
+                    
+                    notification.put("subject", subject);
+                    notification.put("message", message);
+                    notification.put("createdAt", new java.util.Date());
+                    
+                    // Chỉ gửi cho Admin, KHÔNG gửi cho User
+                    messagingTemplate.convertAndSend("/topic/admin/notifications", notification);
+                    log.info("   -> Broadcasted new order to admin only (customerName: {})", customerName);
                 }
             }
-            
-            notification.put("subject", subject);
-            notification.put("message", message);
-            notification.put("createdAt", new java.util.Date());
-
-            log.info("   -> Broadcasting notification: {}", notification);
-
-            // Bắn broadcast cho Admin
-            messagingTemplate.convertAndSend("/topic/admin/notifications", notification);
-            
-            // Nếu event có userId, bắn riêng cho User đó
-            if (map.containsKey("userId")) {
-                String userId = String.valueOf(map.get("userId"));
-                messagingTemplate.convertAndSend("/topic/user/" + userId, notification);
-                log.info("   -> Pushed to user {}", userId);
-            }
+        }
+    }
+    
+    /**
+     * Kiểm tra xem có nên thông báo cho User không
+     * Chỉ thông báo khi status từ CONFIRMED trở đi
+     */
+    private boolean shouldNotifyUser(String status) {
+        return status != null && (
+            "CONFIRMED".equals(status) ||
+            "PREPARING".equals(status) ||
+            "READY".equals(status) ||
+            "DELIVERING".equals(status) ||
+            "DELIVERED".equals(status) ||
+            "COMPLETED".equals(status) ||
+            "CANCELLED".equals(status)
+        );
+    }
+    
+    /**
+     * Hiển thị status bằng tiếng Việt
+     */
+    private String getStatusDisplay(String status) {
+        if (status == null) return "Không xác định";
+        switch (status) {
+            case "PENDING": return "Chờ xác nhận";
+            case "CONFIRMED": return "Đã xác nhận";
+            case "PREPARING": return "Đang chuẩn bị";
+            case "READY": return "Sẵn sàng giao";
+            case "DELIVERING": return "Đang giao hàng";
+            case "DELIVERED": return "Đã giao";
+            case "COMPLETED": return "Hoàn thành";
+            case "CANCELLED": return "Đã hủy";
+            default: return status;
         }
     }
 }

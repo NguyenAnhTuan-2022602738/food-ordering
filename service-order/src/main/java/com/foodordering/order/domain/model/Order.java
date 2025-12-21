@@ -41,8 +41,17 @@ public class Order {
     @Column(length = 20)
     private String phoneNumber;
 
+    @Column(length = 100)
+    private String customerName;
+
     @Column(length = 1000)
     private String notes;
+
+    @Column(length = 20)
+    private String paymentMethod;  // COD, SEPAY, MOMO, etc.
+
+    @Column(length = 30)
+    private String paymentStatus;  // PENDING, SUCCESS, FAILED
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

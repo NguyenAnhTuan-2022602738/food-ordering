@@ -18,5 +18,22 @@ export const orderService = {
       headers: { Authorization: `Bearer ${token}` }
     })
     return response.data
+  },
+
+  async confirmReceipt(orderId) {
+    const token = authService.getToken()
+    const response = await axios.put(`${API_URL}/${orderId}/confirm-receipt`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return response.data
+  },
+
+  async cancelOrder(orderId) {
+    const token = authService.getToken()
+    // Kế thừa logic từ Admin API: PATCH /status
+    const response = await axios.patch(`${API_URL}/${orderId}/status`, { status: 'CANCELLED' }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return response.data
   }
 }

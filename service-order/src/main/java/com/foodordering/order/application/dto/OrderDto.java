@@ -20,6 +20,8 @@ public class OrderDto {
     private String deliveryAddress;
     private String phoneNumber;
     private String notes;
+    private String paymentMethod;
+    private String paymentStatus;
     private List<OrderItemDto> items;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

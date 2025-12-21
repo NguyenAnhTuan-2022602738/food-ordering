@@ -27,9 +27,12 @@ public class CreateOrderUseCase {
         Order order = Order.builder()
                 .userId(request.getUserId())
                 .email(request.getEmail())
+                .customerName(request.getCustomerName())
                 .deliveryAddress(request.getDeliveryAddress())
                 .phoneNumber(request.getPhoneNumber())
                 .notes(request.getNotes())
+                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : "COD")
+                .paymentStatus("PENDING")
                 .build();
         
         for (OrderItemRequest itemReq : request.getItems()) {
@@ -38,6 +41,7 @@ public class CreateOrderUseCase {
                     .menuItemName(itemReq.getMenuItemName() != null ? itemReq.getMenuItemName() : "Item " + itemReq.getMenuItemId())
                     .quantity(itemReq.getQuantity())
                     .price(itemReq.getPrice() != null ? itemReq.getPrice() : BigDecimal.valueOf(50000))
+                    .imageUrl(itemReq.getImageUrl())
                     .build();
             
             // Calculate subtotal manually as @PrePersist hasn't run yet
@@ -52,19 +56,19 @@ public class CreateOrderUseCase {
         Order savedOrder = orderRepository.save(order);
         log.info("[CREATE_ORDER] Order created with ID: {}", savedOrder.getId());
         
-        // Publish event to RabbitMQ
+        // Publish event to RabbitMQ for Socket Notification
         try {
-            com.foodordering.order.application.dto.event.OrderConfirmedEvent event = com.foodordering.order.application.dto.event.OrderConfirmedEvent.builder()
-                    .orderId(savedOrder.getId())
-                    .userId(savedOrder.getUserId())
-                    .email(savedOrder.getEmail())
-                    .items(savedOrder.getItems().stream()
-                            .map(i -> new com.foodordering.order.application.dto.event.OrderConfirmedEvent.OrderItemEventDto(i.getMenuItemId(), i.getQuantity()))
-                            .collect(Collectors.toList()))
-                    .build();
+            java.util.Map<String, Object> event = new java.util.HashMap<>();
+            event.put("type", "ORDER_CREATED");
+            event.put("orderId", savedOrder.getId());
+            event.put("userId", savedOrder.getUserId());
+            event.put("email", savedOrder.getEmail());
+            event.put("customerName", savedOrder.getCustomerName());
+            event.put("totalAmount", savedOrder.getTotalAmount());
+            event.put("createdAt", savedOrder.getCreatedAt() != null ? savedOrder.getCreatedAt().toString() : null);
             
             rabbitTemplate.convertAndSend("food-ordering-exchange", "order.confirmed", event);
-            log.info("[CREATE_ORDER] Published OrderConfirmedEvent for Order ID: {}", savedOrder.getId());
+            log.info("[CREATE_ORDER] Published OrderCreatedEvent for Order ID: {} with customerName: {}", savedOrder.getId(), savedOrder.getCustomerName());
         } catch (Exception e) {
             log.error("[CREATE_ORDER] Failed to publish event", e);
         }
@@ -81,6 +85,8 @@ public class CreateOrderUseCase {
                 .deliveryAddress(order.getDeliveryAddress())
                 .phoneNumber(order.getPhoneNumber())
                 .notes(order.getNotes())
+                .paymentMethod(order.getPaymentMethod())
+                .paymentStatus(order.getPaymentStatus())
                 .items(order.getItems().stream().map(this::toItemDto).collect(Collectors.toList()))
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
@@ -94,6 +100,7 @@ public class CreateOrderUseCase {
                 .quantity(item.getQuantity())
                 .price(item.getPrice())
                 .subtotal(item.getSubtotal())
+                .imageUrl(item.getImageUrl())
                 .build();
     }
 

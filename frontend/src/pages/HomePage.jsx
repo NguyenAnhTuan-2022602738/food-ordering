@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import Hero from '../components/Hero'
-import Footer from '../components/Footer'
 import { ArrowRight, Star, ShoppingBag, Heart, Clock } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 
@@ -27,10 +26,10 @@ export default function HomePage() {
   }, [])
 
   const categories = [
-    { id: 1, name: 'Phở & Noodles', image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=300&q=80', count: '12 Items' },
-    { id: 2, name: 'Banh Mi', image: 'https://images.unsplash.com/photo-1635526910429-04a328763a18?auto=format&fit=crop&w=300&q=80', count: '8 Items' },
-    { id: 3, name: 'Rice Dishes', image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=300&q=80', count: '15 Items' },
-    { id: 4, name: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80', count: '10 Items' },
+    { id: 1, name: 'Phở & Mì', image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=300&q=80', count: '12 Món' },
+    { id: 2, name: 'Bánh Mì', image: 'https://images.unsplash.com/photo-1635526910429-04a328763a18?auto=format&fit=crop&w=300&q=80', count: '8 Món' },
+    { id: 3, name: 'Cơm', image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=300&q=80', count: '15 Món' },
+    { id: 4, name: 'Đồ uống', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80', count: '10 Món' },
   ]
 
   return (
@@ -40,8 +39,8 @@ export default function HomePage() {
       {/* Categories Section */}
       <section className="py-20 container mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="text-orange-500 font-bold tracking-wider uppercase text-sm">Categories</span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Explore Our Menu</h2>
+          <span className="text-orange-500 font-bold tracking-wider uppercase text-sm">Danh mục</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Khám phá thực đơn</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -71,11 +70,11 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <span className="text-orange-500 font-bold tracking-wider uppercase text-sm">Popular</span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Top Rated Dishes</h2>
+              <span className="text-orange-500 font-bold tracking-wider uppercase text-sm">Phổ biến</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Món ăn được yêu thích</h2>
             </div>
             <Link to="/menu" className="hidden md:flex items-center gap-2 text-orange-500 font-bold hover:text-orange-600 transition-colors">
-              View All Menu <ArrowRight size={20} />
+              Xem tất cả <ArrowRight size={20} />
             </Link>
           </div>
 
@@ -91,15 +90,19 @@ export default function HomePage() {
                 <div key={item.id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group">
                   <div className="relative h-48 overflow-hidden">
                     <img 
-                      src={item.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=80'} 
+                      src={item.imageUrl || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=80'} 
                       alt={item.name} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=500&q=80';
+                      }}
                     />
                     <button className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-colors">
                       <Heart size={18} />
                     </button>
                     <div className="absolute bottom-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-xs font-bold text-gray-800 flex items-center gap-1">
-                      <Clock size={12} /> 20-30 min
+                      <Clock size={12} /> 20-30 phút
                     </div>
                   </div>
                   
@@ -132,7 +135,7 @@ export default function HomePage() {
           
           <div className="mt-12 text-center md:hidden">
             <Link to="/menu" className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-full font-bold shadow-lg shadow-orange-500/30">
-              View All Menu <ArrowRight size={20} />
+              Xem tất cả <ArrowRight size={20} />
             </Link>
           </div>
         </div>
@@ -145,15 +148,15 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Us?</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">We don't just deliver food, we deliver happiness. Here's why thousands of customers trust us.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Tại sao chọn chúng tôi?</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">Chúng tôi không chỉ giao món ăn, chúng tôi trao gửi niềm vui. Đây là lý do hàng ngàn khách hàng tin tưởng.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: 'Fast Delivery', desc: 'Guaranteed delivery within 30 minutes or your food is free.', icon: '🚀' },
-              { title: 'Fresh Ingredients', desc: 'We source our ingredients daily from local organic farms.', icon: '🥬' },
-              { title: 'Expert Chefs', desc: 'Our chefs have 10+ years of experience in 5-star restaurants.', icon: '👨‍🍳' }
+              { title: 'Giao hàng nhanh', desc: 'Cam kết giao hàng trong 30 phút hoặc miễn phí.', icon: '🚀' },
+              { title: 'Nguyên liệu tươi sạch', desc: 'Nguyên liệu nhập khẩu mỗi ngày từ các nông trại sạch.', icon: '🥬' },
+              { title: 'Đầu bếp chuyên nghiệp', desc: 'Đầu bếp tiêu chuẩn 5 sao với hơn 10 năm kinh nghiệm.', icon: '👨‍🍳' }
             ].map((item, idx) => (
               <div key={idx} className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-orange-500/50 transition-colors duration-300">
                 <div className="text-5xl mb-6">{item.icon}</div>
@@ -164,8 +167,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   )
 }

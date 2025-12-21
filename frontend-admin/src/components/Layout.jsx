@@ -38,7 +38,6 @@ export default function Layout({ children }) {
       fetchNotifications()
       
       stompClientRef.current = connectSocket((newNotification) => {
-        // Check if notification already exists to prevent duplicates (optional but good safety)
         setNotifications(prev => {
           if (prev.some(n => n.id === newNotification.id && newNotification.id)) return prev;
           return [newNotification, ...prev];
@@ -46,24 +45,17 @@ export default function Layout({ children }) {
         
         setUnreadCount(prev => prev + 1)
         
-        // Use a unique ID for toast to prevent duplicates if library supports it, 
-        // or just rely on the fact that we only call this once per event.
         toast(newNotification.message, {
-          id: newNotification.id || `notif-${Date.now()}`, // Prevent duplicate toasts
+          id: newNotification.id || `notif-${Date.now()}`,
           icon: '🔔',
           duration: 5000
         })
         
-        // Dispatch event for other components to listen
         window.dispatchEvent(new CustomEvent('notification_received', { detail: newNotification }))
       })
     }
 
-    return () => {
-      // Don't disconnect here in Strict Mode to avoid reconnection loops.
-      // The socket service is now a singleton and handles reuse.
-      // We only disconnect on logout.
-    }
+    return () => {}
   }, [user])
 
   // Close dropdown when clicking outside
@@ -104,13 +96,13 @@ export default function Layout({ children }) {
   }
 
   const menuItems = [
-    { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/orders', icon: ShoppingBag, label: 'Orders' },
-    { path: '/menu', icon: UtensilsCrossed, label: 'Menu Items' },
-    { path: '/categories', icon: FolderOpen, label: 'Categories' },
-    { path: '/ingredients', icon: Carrot, label: 'Ingredients' },
-    { path: '/recipes', icon: ScrollText, label: 'Recipes' },
-    { path: '/users', icon: Users, label: 'Users' }
+    { path: '/', icon: LayoutDashboard, label: 'Tổng quan' },
+    { path: '/orders', icon: ShoppingBag, label: 'Đơn hàng' },
+    { path: '/menu', icon: UtensilsCrossed, label: 'Món ăn' },
+    { path: '/categories', icon: FolderOpen, label: 'Danh mục' },
+    { path: '/ingredients', icon: Carrot, label: 'Nguyên liệu' },
+    { path: '/recipes', icon: ScrollText, label: 'Công thức' },
+    { path: '/users', icon: Users, label: 'Người dùng' }
   ]
 
   return (
@@ -180,7 +172,7 @@ export default function Layout({ children }) {
               <button 
                 onClick={handleLogout}
                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                title="Logout"
+                title="Đăng xuất"
               >
                 <LogOut size={18} />
               </button>
@@ -202,7 +194,7 @@ export default function Layout({ children }) {
               <Menu size={20} />
             </button>
             <h2 className="text-lg font-semibold text-gray-800">
-              {menuItems.find(i => i.path === location.pathname)?.label || 'Dashboard'}
+              {menuItems.find(i => i.path === location.pathname)?.label || 'Tổng quan'}
             </h2>
           </div>
 
@@ -223,14 +215,14 @@ export default function Layout({ children }) {
               {showNotifications && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden animate-in slide-in-from-top-2 z-50">
                   <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                    <h3 className="font-bold text-gray-800">Notifications</h3>
-                    <span className="text-xs text-gray-500">{notifications.length} total</span>
+                    <h3 className="font-bold text-gray-800">Thông báo</h3>
+                    <span className="text-xs text-gray-500">Tổng: {notifications.length}</span>
                   </div>
                   <div className="max-h-96 overflow-y-auto custom-scrollbar">
                     {notifications.length === 0 ? (
                       <div className="p-8 text-center text-gray-500">
                         <Bell size={32} className="mx-auto mb-2 opacity-20" />
-                        <p>No notifications yet</p>
+                        <p>Chưa có thông báo mới</p>
                       </div>
                     ) : (
                       notifications.map((notif) => (
@@ -243,7 +235,7 @@ export default function Layout({ children }) {
                               <h4 className="font-semibold text-gray-800 text-sm">{notif.subject}</h4>
                               <p className="text-xs text-gray-500 mt-1">{notif.message}</p>
                               <span className="text-[10px] text-gray-400 mt-2 block">
-                                {new Date(notif.createdAt).toLocaleString()}
+                                {new Date(notif.createdAt).toLocaleString('vi-VN')}
                               </span>
                             </div>
                           </div>

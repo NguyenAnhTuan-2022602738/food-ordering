@@ -1,0 +1,33 @@
+# ConfigMap for common environment variables
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+  namespace: food-ordering
+data:
+  EUREKA_SERVER_URL: "http://eureka-server:8761/eureka/"
+  SPRING_PROFILES_ACTIVE: "kubernetes"
+  
+---
+# Secret for database credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: food-ordering
+type: Opaque
+stringData:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  
+---
+# Secret for RabbitMQ credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-credentials
+  namespace: food-ordering
+type: Opaque
+stringData:
+  RABBITMQ_USER: guest
+  RABBITMQ_PASSWORD: guest

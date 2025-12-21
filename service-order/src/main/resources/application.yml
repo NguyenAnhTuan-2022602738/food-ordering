@@ -9,7 +9,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5434/food_ordering_order
     username: postgres
-    password: postgres
+    password: 10112004
     driver-class-name: org.postgresql.Driver
   
   # JPA Configuration
