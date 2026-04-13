@@ -27,4 +27,5 @@ public class CreateOrderDto {
     private String customerName;
     private String notes;
     private String paymentMethod;  // COD, SEPAY
+    private Integer pointsToUse;
 }

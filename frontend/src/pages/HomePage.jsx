@@ -110,7 +110,7 @@ export default function HomePage() {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-gray-900 text-lg line-clamp-1">{item.name}</h3>
                       <div className="flex items-center gap-1 text-yellow-400 text-sm font-bold">
-                        <Star size={14} fill="currentColor" /> 4.8
+                        <Star size={14} fill="currentColor" /> {item.averageRating ? item.averageRating.toFixed(1) : 'Mới'}
                       </div>
                     </div>
                     

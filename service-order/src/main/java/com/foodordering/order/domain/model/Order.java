@@ -50,6 +50,9 @@ public class Order {
     @Column(length = 20)
     private String paymentMethod;  // COD, SEPAY, MOMO, etc.
 
+    @Column(name = "points_used")
+    private Integer pointsUsed;
+
     @Column(length = 30)
     private String paymentStatus;  // PENDING, SUCCESS, FAILED
 
@@ -94,6 +97,14 @@ public class Order {
         this.totalAmount = items.stream()
                 .map(OrderItem::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+                
+        if (pointsUsed != null && pointsUsed > 0) {
+            BigDecimal discount = BigDecimal.valueOf(pointsUsed * 1000L);
+            this.totalAmount = this.totalAmount.subtract(discount);
+            if (this.totalAmount.compareTo(BigDecimal.ZERO) < 0) {
+                this.totalAmount = BigDecimal.ZERO;
+            }
+        }
     }
 
     public void confirm() {

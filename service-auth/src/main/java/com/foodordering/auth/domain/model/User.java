@@ -43,6 +43,9 @@ public class User {
     @Column(nullable = false)
     private UserStatus status;
 
+    @Column(name = "loyalty_points", nullable = false)
+    private Integer loyaltyPoints;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -56,11 +59,32 @@ public class User {
         if (status == null) {
             status = UserStatus.ACTIVE;
         }
+        if (loyaltyPoints == null) {
+            loyaltyPoints = 0;
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Business method: Cộng điểm
+     */
+    public void addPoints(int points) {
+        if (points > 0) {
+            this.loyaltyPoints += points;
+        }
+    }
+
+    /**
+     * Business method: Trừ điểm
+     */
+    public void deductPoints(int points) {
+        if (points > 0 && this.loyaltyPoints >= points) {
+            this.loyaltyPoints -= points;
+        }
     }
 
     /**

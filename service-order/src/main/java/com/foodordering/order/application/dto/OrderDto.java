@@ -22,6 +22,7 @@ public class OrderDto {
     private String notes;
     private String paymentMethod;
     private String paymentStatus;
+    private Integer pointsUsed;
     private List<OrderItemDto> items;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

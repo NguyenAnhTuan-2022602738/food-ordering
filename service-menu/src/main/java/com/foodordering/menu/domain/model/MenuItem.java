@@ -46,6 +46,12 @@ public class MenuItem {
     @Column(nullable = false)
     private Integer displayOrder;
 
+    @Column(name = "average_rating")
+    private Double averageRating;
+
+    @Column(name = "total_reviews")
+    private Integer totalReviews;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -61,6 +67,12 @@ public class MenuItem {
         }
         if (displayOrder == null) {
             displayOrder = 0;
+        }
+        if (averageRating == null) {
+            averageRating = 0.0;
+        }
+        if (totalReviews == null) {
+            totalReviews = 0;
         }
     }
 

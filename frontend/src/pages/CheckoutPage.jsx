@@ -22,6 +22,11 @@ export default function CheckoutPage() {
     phone: '',
     note: ''
   })
+  const [pointsToUse, setPointsToUse] = useState(0)
+  
+  // Custom total after applying points. 1 point = 1000 VND
+  const discountAmount = pointsToUse * 1000
+  const finalTotal = Math.max(0, total - discountAmount)
 
   // Listen for PAYMENT_SUCCESS notification from WebSocket
   useEffect(() => {
@@ -72,7 +77,8 @@ export default function CheckoutPage() {
         deliveryAddress: formData.address,
         phoneNumber: formData.phone,
         notes: formData.note,
-        paymentMethod: paymentMethod  // COD or SEPAY
+        paymentMethod: paymentMethod,
+        pointsToUse: pointsToUse
       }
 
       // Tạo order trước
@@ -87,7 +93,7 @@ export default function CheckoutPage() {
         const paymentResponse = await axios.post('/api/payments/sepay/init', {
           orderId: orderId,
           userId: user?.userId,
-          amount: total
+          amount: finalTotal
         }, {
           headers: { Authorization: `Bearer ${token}` }
         })
@@ -255,6 +261,50 @@ export default function CheckoutPage() {
                   </label>
                 </div>
               </div>
+              
+              {/* Loyalty Points Section */}
+              <div className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 mt-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-500">
+                    <CheckCircle size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Điểm thưởng (Loyalty Points)</h2>
+                    <p className="text-gray-500">Bạn đang có <strong className="text-yellow-600">{user?.loyaltyPoints || 0}</strong> điểm</p>
+                  </div>
+                </div>
+                
+                {(!user || (user.loyaltyPoints || 0) === 0) ? (
+                   <p className="text-sm text-gray-500 italic">Bạn chưa gắn kết đủ để có điểm thưởng hoặc cần phải tải lại trang để thấy điểm mới.</p>
+                ) : (
+                   <div>
+                     <label className="block text-sm font-medium text-gray-700 mb-2">Số điểm muốn dùng (1 điểm = 1.000đ)</label>
+                     <div className="flex gap-4 items-center">
+                       <input
+                         type="number"
+                         min="0"
+                         max={Math.min(user?.loyaltyPoints || 0, Math.ceil(total / 1000))}
+                         value={pointsToUse}
+                         onChange={(e) => setPointsToUse(Math.min(parseInt(e.target.value) || 0, user?.loyaltyPoints || 0, Math.ceil(total / 1000)))}
+                         className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
+                         placeholder="Nhập số điểm..."
+                       />
+                       <button 
+                         type="button" 
+                         onClick={() => setPointsToUse(Math.min(user?.loyaltyPoints || 0, Math.ceil(total / 1000)))}
+                         className="px-6 py-3 bg-yellow-100 text-yellow-700 font-bold rounded-xl hover:bg-yellow-200 transition-colors"
+                       >
+                         Dùng tối đa
+                       </button>
+                     </div>
+                     {pointsToUse > 0 && (
+                        <p className="text-sm text-green-600 font-medium mt-2">
+                          Bạn sẽ được giảm <strong className="text-lg">{(pointsToUse * 1000).toLocaleString('vi-VN')}đ</strong>
+                        </p>
+                     )}
+                   </div>
+                )}
+              </div>
             </div>
 
             {/* Order Summary Sidebar */}
@@ -296,9 +346,15 @@ export default function CheckoutPage() {
                     <span>Phí giao hàng</span>
                     <span className="text-green-500">Miễn phí</span>
                   </div>
-                  <div className="flex justify-between text-xl font-bold text-gray-900 pt-2">
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600 font-medium">
+                      <span>Dùng điểm thưởng (-{pointsToUse}d)</span>
+                      <span>-{discountAmount.toLocaleString('vi-VN')}đ</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t border-gray-100 mt-2">
                     <span>Tổng cộng</span>
-                    <span className="text-orange-500">{(total || 0).toLocaleString('vi-VN')}đ</span>
+                    <span className="text-orange-500">{finalTotal.toLocaleString('vi-VN')}đ</span>
                   </div>
                 </div>
 
@@ -441,7 +497,7 @@ export default function CheckoutPage() {
                 <div className="bg-orange-50 rounded-xl p-3 mb-4">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-gray-900">Tổng thanh toán</span>
-                    <span className="text-xl font-bold text-orange-500">{total?.toLocaleString('vi-VN')}đ</span>
+                    <span className="text-xl font-bold text-orange-500">{finalTotal?.toLocaleString('vi-VN')}đ</span>
                   </div>
                 </div>
                 

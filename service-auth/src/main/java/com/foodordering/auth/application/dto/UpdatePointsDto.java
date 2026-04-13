@@ -9,11 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
-    private Long id;
-    private String email;
-    private String fullName;
-    private String phoneNumber;
-    private String role;
-    private Integer loyaltyPoints;
+public class UpdatePointsDto {
+    private Integer points;
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useCart } from '../context/CartContext'
 import { Search, Filter, ShoppingBag, Star, Heart, ChefHat } from 'lucide-react'
+import ProductModal from '../components/ProductModal'
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([])
@@ -9,6 +10,7 @@ export default function MenuPage() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('ALL')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedItemForModal, setSelectedItemForModal] = useState(null)
   const { addToCart } = useCart()
 
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function MenuPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredItems.map((item) => (
               <div key={item.id} className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 group overflow-hidden border border-gray-100">
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-56 overflow-hidden cursor-pointer" onClick={() => setSelectedItemForModal(item)}>
                   <img 
                     src={item.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'} 
                     alt={item.name} 
@@ -118,21 +120,23 @@ export default function MenuPage() {
                       e.target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80';
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                     <span className="text-white font-bold tracking-wider opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">Xem chi tiết</span>
+                  </div>
                   
-                  <button className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
+                  <button className="absolute top-4 right-4 z-10 p-2.5 bg-white/90 backdrop-blur-sm rounded-full text-gray-400 hover:text-red-500 hover:bg-white transition-all shadow-sm">
                     <Heart size={20} />
                   </button>
                 </div>
                 
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-orange-500 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 line-clamp-1 group-hover:text-orange-500 transition-colors cursor-pointer" onClick={() => setSelectedItemForModal(item)}>
                       {item.name}
                     </h3>
                     <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg">
                       <Star size={14} className="text-yellow-400 fill-yellow-400" />
-                      <span className="text-sm font-bold text-gray-700">4.5</span>
+                      <span className="text-sm font-bold text-gray-700">{item.averageRating ? item.averageRating.toFixed(1) : 'Mới'}</span>
                     </div>
                   </div>
                   
@@ -163,6 +167,15 @@ export default function MenuPage() {
           </div>
         )}
       </div>
+
+      {/* Product Modal */}
+      {selectedItemForModal && (
+        <ProductModal 
+          item={selectedItemForModal} 
+          onClose={() => setSelectedItemForModal(null)}
+          addToCart={addToCart}
+        />
+      )}
     </div>
   )
 }

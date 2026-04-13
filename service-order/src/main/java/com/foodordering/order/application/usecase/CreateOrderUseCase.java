@@ -19,6 +19,7 @@ public class CreateOrderUseCase {
     private final OrderRepository orderRepository;
     private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
     private final com.foodordering.order.infrastructure.client.InventoryServiceClient inventoryServiceClient;
+    private final com.foodordering.order.infrastructure.client.AuthServiceClient authServiceClient;
 
     @Transactional
     public OrderDto execute(CreateOrderDto request) {
@@ -33,6 +34,7 @@ public class CreateOrderUseCase {
                 .notes(request.getNotes())
                 .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : "COD")
                 .paymentStatus("PENDING")
+                .pointsUsed(request.getPointsToUse() != null ? request.getPointsToUse() : 0)
                 .build();
         
         for (OrderItemRequest itemReq : request.getItems()) {
@@ -55,6 +57,12 @@ public class CreateOrderUseCase {
         
         Order savedOrder = orderRepository.save(order);
         log.info("[CREATE_ORDER] Order created with ID: {}", savedOrder.getId());
+        
+        // Deduct points
+        if (savedOrder.getPointsUsed() != null && savedOrder.getPointsUsed() > 0) {
+            authServiceClient.deductPoints(savedOrder.getUserId(), savedOrder.getPointsUsed());
+            log.info("[CREATE_ORDER] Deducted {} points for User {}", savedOrder.getPointsUsed(), savedOrder.getUserId());
+        }
         
         // Publish event to RabbitMQ for Socket Notification
         try {
@@ -87,6 +95,7 @@ public class CreateOrderUseCase {
                 .notes(order.getNotes())
                 .paymentMethod(order.getPaymentMethod())
                 .paymentStatus(order.getPaymentStatus())
+                .pointsUsed(order.getPointsUsed())
                 .items(order.getItems().stream().map(this::toItemDto).collect(Collectors.toList()))
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())

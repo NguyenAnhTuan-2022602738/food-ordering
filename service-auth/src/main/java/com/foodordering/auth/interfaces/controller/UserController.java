@@ -8,9 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.foodordering.auth.application.dto.UpdatePointsDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +36,35 @@ public class UserController {
         return ResponseEntity.ok(userDtos);
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Lấy thông tin User theo ID")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .map(this::mapToDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/points/add")
+    @Operation(summary = "Cộng điểm thưởng cho User")
+    public ResponseEntity<UserDto> addPoints(@PathVariable Long id, @RequestBody UpdatePointsDto request) {
+        return userRepository.findById(id).map(user -> {
+            user.addPoints(request.getPoints());
+            userRepository.save(user);
+            return ResponseEntity.ok(mapToDto(user));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/points/deduct")
+    @Operation(summary = "Trừ điểm thưởng của User")
+    public ResponseEntity<UserDto> deductPoints(@PathVariable Long id, @RequestBody UpdatePointsDto request) {
+        return userRepository.findById(id).map(user -> {
+            user.deductPoints(request.getPoints());
+            userRepository.save(user);
+            return ResponseEntity.ok(mapToDto(user));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     private UserDto mapToDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
@@ -44,6 +72,7 @@ public class UserController {
                 .fullName(user.getFullName())
                 .phoneNumber(user.getPhoneNumber())
                 .role(user.getRole().name())
+                .loyaltyPoints(user.getLoyaltyPoints())
                 .build();
     }
 }
