@@ -26,14 +26,5 @@ logging:
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%level] [PAYMENT-SERVICE] %msg%n"
 
-# SePay Configuration - THAY THẾ BẰNG KEY CỦA BẠN
-sepay:
-  api-token: JUM2O6XZH3NKPYU6SASDF0OTQAGYIG3JRDKEUITCUJGA09ZRKJBRXO4FDHVIRCCZ
-  bank-account-number: 7280010112004
-  bank-code: MB  # MB, VCB, TCB, ACB, etc.
-  account-name: NGUYEN ANH TUAN
-  # Sandbox: https://my.dev.sepay.vn | Production: https://my.sepay.vn
-  api-url: https://my.sepay.vn/userapi
-  # URL frontend để redirect sau thanh toán
-  frontend-url: http://localhost:3000
+
 
