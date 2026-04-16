@@ -22,6 +22,18 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+  # Security / OAuth2
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:tu-dien-sau}
+            client-secret: ${GOOGLE_CLIENT_SECRET:tu-dien-sau}
+            scope:
+              - email
+              - profile
+
 # Eureka Client Configuration
 eureka:
   client:

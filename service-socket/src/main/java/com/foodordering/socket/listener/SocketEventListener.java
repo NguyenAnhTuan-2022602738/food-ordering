@@ -48,6 +48,14 @@ public class SocketEventListener {
             if (map.containsKey("orderId")) {
                 Long orderId = ((Number) map.get("orderId")).longValue();
                 
+                // Handle CHAT_MESSAGE - Relay chat to all participants of that order
+                if ("CHAT_MESSAGE".equals(type)) {
+                    String destination = "/topic/orders/" + orderId + "/chat";
+                    messagingTemplate.convertAndSend(destination, map);
+                    log.info("   -> Relayed CHAT_MESSAGE to {}", destination);
+                    return;
+                }
+
                 // Lấy customerName, nếu không có thì dùng email hoặc "Khách hàng"
                 String customerName = (String) map.get("customerName");
                 if (customerName == null || customerName.isEmpty()) {

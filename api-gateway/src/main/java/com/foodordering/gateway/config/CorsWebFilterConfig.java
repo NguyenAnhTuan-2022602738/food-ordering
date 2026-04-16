@@ -30,6 +30,7 @@ public class CorsWebFilterConfig {
     private static final String MAX_AGE = "3600";
     
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList(
+        "http://localhost:5173",
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",

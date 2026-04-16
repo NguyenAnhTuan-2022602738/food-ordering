@@ -88,7 +88,8 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Trang chủ', path: '/' },
     { name: 'Thực đơn', path: '/menu' },
-    ...(user ? [{ name: 'Đơn hàng', path: '/my-orders' }] : [])
+    ...(user ? [{ name: 'Đơn hàng', path: '/my-orders' }] : []),
+    ...(user?.role === 'SHIPPER' ? [{ name: 'Shipper', path: '/shipper' }] : [])
   ]
 
   const isActive = (path) => location.pathname === path

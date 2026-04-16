@@ -116,6 +116,25 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <div className="mt-6">
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Hoặc tiếp tục với</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => window.location.href = 'http://localhost:8081/oauth2/authorization/google'}
+            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 py-3.5 rounded-xl font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-300"
+          >
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
+            Đăng nhập bằng Google
+          </button>
+        </div>
+
         <div className="mt-8 text-center">
           <p className="text-gray-500">
             Chưa có tài khoản?{' '}

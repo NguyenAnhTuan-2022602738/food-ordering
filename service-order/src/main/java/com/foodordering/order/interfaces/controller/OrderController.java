@@ -300,6 +300,87 @@ public class OrderController {
         }
     }
 
+    // --- Shipper Endpoints ---
+
+    @GetMapping("/shipper/ready")
+    @Operation(summary = "Lấy danh sách đơn hàng sẵn sàng giao (Cho Shipper)")
+    public ResponseEntity<List<OrderDto>> getOrdersReadyForDelivery() {
+        log.info("[ORDER-CONTROLLER] Shipper fetching ready orders");
+        List<Order> orders = orderRepository.findByStatus(OrderStatus.READY);
+        return ResponseEntity.ok(orders.stream().map(this::convertToDto).collect(Collectors.toList()));
+    }
+
+    @GetMapping("/shipper/current/{shipperId}")
+    @Operation(summary = "Lấy danh sách đơn hàng đang giao của Shipper")
+    public ResponseEntity<List<OrderDto>> getShipperCurrentOrders(@PathVariable Long shipperId) {
+        log.info("[ORDER-CONTROLLER] Fetching current orders for shipper {}", shipperId);
+        List<Order> orders = orderRepository.findByShipperId(shipperId).stream()
+                .filter(o -> o.getStatus() == OrderStatus.DELIVERING)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(orders.stream().map(this::convertToDto).collect(Collectors.toList()));
+    }
+
+    @PutMapping("/{orderId}/pickup")
+    @Operation(summary = "Shipper nhận đơn hàng để đi giao")
+    public ResponseEntity<OrderDto> pickUpOrder(@PathVariable Long orderId, @RequestParam Long shipperId) {
+        log.info("[ORDER-CONTROLLER] Shipper {} picking up order {}", shipperId, orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new RuntimeException("Đơn hàng không ở trạng thái sẵn sàng để nhận.");
+        }
+
+        order.setStatus(OrderStatus.DELIVERING);
+        order.setShipperId(shipperId);
+        order.setAssignedAt(java.time.LocalDateTime.now());
+        Order updated = orderRepository.save(order);
+
+        publishStatusChangeEvent(updated);
+        return ResponseEntity.ok(convertToDto(updated));
+    }
+
+    @PutMapping("/{orderId}/deliver")
+    @Operation(summary = "Shipper xác nhận đã giao hàng thành công")
+    public ResponseEntity<OrderDto> deliverOrder(@PathVariable Long orderId) {
+        log.info("[ORDER-CONTROLLER] Shipper confirming delivery for order {}", orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        if (order.getStatus() != OrderStatus.DELIVERING) {
+            throw new RuntimeException("Đơn hàng không ở trạng thái đang giao.");
+        }
+
+        order.setStatus(OrderStatus.COMPLETED);
+        // Nếu thanh toán COD thì đánh dấu là thành công luôn
+        if ("COD".equals(order.getPaymentMethod())) {
+            order.setPaymentStatus("SUCCESS");
+        }
+        Order updated = orderRepository.save(order);
+
+        publishStatusChangeEvent(updated);
+        return ResponseEntity.ok(convertToDto(updated));
+    }
+
+    private void publishStatusChangeEvent(Order updated) {
+        try {
+            Map<String, Object> statusEvent = new java.util.HashMap<>();
+            statusEvent.put("type", "ORDER_STATUS_CHANGED");
+            statusEvent.put("orderId", updated.getId());
+            statusEvent.put("userId", updated.getUserId());
+            statusEvent.put("status", updated.getStatus().name());
+            statusEvent.put("updatedAt", updated.getUpdatedAt().toString());
+            
+            rabbitTemplate.convertAndSend(
+                com.foodordering.order.infrastructure.config.RabbitMQConfig.EXCHANGE, 
+                "order.status.changed", 
+                statusEvent
+            );
+        } catch (Exception e) {
+            log.error("Failed to publish status change event", e);
+        }
+    }
+
     @GetMapping("/health")
     @Operation(summary = "Health Check")
     public ResponseEntity<String> health() {
@@ -332,6 +413,8 @@ public class OrderController {
         dto.setNotes(order.getNotes());
         dto.setPaymentMethod(order.getPaymentMethod());
         dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setShipperId(order.getShipperId());
+        dto.setAssignedAt(order.getAssignedAt());
         dto.setCreatedAt(order.getCreatedAt());
         dto.setUpdatedAt(order.getUpdatedAt());
         return dto;

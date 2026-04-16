@@ -7,5 +7,6 @@ package com.foodordering.auth.domain.model;
 public enum UserRole {
     CUSTOMER,  // Khách hàng đặt món
     ADMIN,     // Quản trị viên
-    STAFF      // Nhân viên (dự phòng cho tương lai)
+    STAFF,     // Nhân viên (dự phòng cho tương lai)
+    SHIPPER    // Người giao hàng
 }

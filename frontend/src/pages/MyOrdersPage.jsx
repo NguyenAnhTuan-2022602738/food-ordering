@@ -6,6 +6,8 @@ import { Package, Clock, MapPin, Phone, ChevronRight, ShoppingBag, CheckCircle, 
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import ChatBox from '../components/ChatBox'
+import { OrderSkeleton } from '../components/Skeleton'
 
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState([])
@@ -167,7 +169,7 @@ export default function MyOrdersPage() {
           {loading ? (
             <div className="space-y-6">
               {[1, 2, 3].map(i => (
-                <div key={i} className="bg-white rounded-3xl h-64 animate-pulse shadow-sm border border-gray-100"></div>
+                <OrderSkeleton key={i} />
               ))}
             </div>
           ) : error ? (
@@ -342,6 +344,11 @@ export default function MyOrdersPage() {
                             ⚠️ <strong>Chưa thanh toán:</strong> Đơn hàng chuyển khoản cần được thanh toán để được xử lý.
                           </p>
                         </div>
+                      )}
+
+                      {/* Chat Box for current order */}
+                      {['CONFIRMED', 'PREPARING', 'READY', 'DELIVERING'].includes(order.status) && (
+                        <ChatBox orderId={order.id} currentUser={user} senderName={user.fullName || user.email} />
                       )}
                     </div>
                   </div>

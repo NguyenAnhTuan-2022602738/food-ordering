@@ -9,4 +9,6 @@ import java.util.List;
 public interface JpaOrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserId(Long userId);
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<Order> findByStatus(com.foodordering.order.domain.model.OrderStatus status);
+    List<Order> findByShipperIdOrderByCreatedAtDesc(Long shipperId);
 }

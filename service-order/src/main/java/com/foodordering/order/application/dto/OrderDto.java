@@ -23,6 +23,8 @@ public class OrderDto {
     private String paymentMethod;
     private String paymentStatus;
     private Integer pointsUsed;
+    private Long shipperId;
+    private LocalDateTime assignedAt;
     private List<OrderItemDto> items;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

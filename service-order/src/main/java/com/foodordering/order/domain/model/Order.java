@@ -56,6 +56,11 @@ public class Order {
     @Column(length = 30)
     private String paymentStatus;  // PENDING, SUCCESS, FAILED
 
+    @Column(name = "shipper_id")
+    private Long shipperId;
+
+    private LocalDateTime assignedAt;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();

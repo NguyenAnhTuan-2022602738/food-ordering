@@ -12,6 +12,7 @@ public class RabbitMQConfig {
     public static final String EXCHANGE = "food-ordering-exchange";
     public static final String ORDER_NOTIFICATION_QUEUE = "order.notification.queue";
     public static final String ORDER_CONFIRMED_ROUTING_KEY = "order.confirmed";
+    public static final String CHAT_ROUTING_KEY = "chat.message";
 
     @Bean
     public TopicExchange exchange() {
