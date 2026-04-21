@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
@@ -17,6 +18,7 @@ import java.util.function.Function;
  * Updated for JJWT 0.12.3 compatibility
  */
 @Service
+@Slf4j
 public class JwtService {
 
     @Value("${jwt.secret}")
@@ -24,6 +26,15 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        if (secretKey == null || secretKey.length() < 32) {
+            log.error("[JWT-SERVICE] ❌ JWT Secret Key is missing or too short!");
+        } else {
+            log.info("[JWT-SERVICE] ✅ JWT Service initialized with secret key length: {}", secretKey.length());
+        }
+    }
 
     /**
      * Tạo JWT token từ email và role
