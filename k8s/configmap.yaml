@@ -19,7 +19,7 @@ type: Opaque
 stringData:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "10112004"
-  JWT_SECRET: "food-ordering-secret-key-2024-for-testing-only-replace-in-production"
+  JWT_SECRET: "Zm9vZE9yZGVyaW5nU2VjcmV0S2V5Rm9ySldUVG9rZW5HZW5lcmF0aW9uMjAyNFZlcnlMb25nQW5kU2VjdXJlS2V5MTIzNDU2"
   
 ---
 # Secret for RabbitMQ credentials
