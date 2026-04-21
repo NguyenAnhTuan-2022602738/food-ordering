@@ -164,6 +164,11 @@ spec:
                 configMapKeyRef:
                   name: common-config
                   key: EUREKA_SERVER_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: JWT_SECRET
           resources:
             requests:
               memory: "256Mi"

@@ -18,7 +18,8 @@ metadata:
 type: Opaque
 stringData:
   POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
+  POSTGRES_PASSWORD: "10112004"
+  JWT_SECRET: "food-ordering-secret-key-2024-for-testing-only-replace-in-production"
   
 ---
 # Secret for RabbitMQ credentials
