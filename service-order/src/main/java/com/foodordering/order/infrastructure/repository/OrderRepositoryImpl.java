@@ -1,6 +1,7 @@
 package com.foodordering.order.infrastructure.repository;
 
 import com.foodordering.order.domain.model.Order;
+import com.foodordering.order.domain.model.OrderStatus;
 import com.foodordering.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,16 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findByUserId(Long userId) {
         return jpaRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    @Override
+    public List<Order> findByStatus(OrderStatus status) {
+        return jpaRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<Order> findByShipperId(Long shipperId) {
+        return jpaRepository.findByShipperIdOrderByCreatedAtDesc(shipperId);
     }
 
     @Override

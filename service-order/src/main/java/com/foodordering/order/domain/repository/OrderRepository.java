@@ -1,6 +1,7 @@
 package com.foodordering.order.domain.repository;
 
 import com.foodordering.order.domain.model.Order;
+import com.foodordering.order.domain.model.OrderStatus;
 import java.util.List;
 import java.util.Optional;
 
