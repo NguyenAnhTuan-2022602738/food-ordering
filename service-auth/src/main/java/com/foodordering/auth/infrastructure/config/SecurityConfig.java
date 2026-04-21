@@ -26,14 +26,6 @@ public class SecurityConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     /**
-     * Password Encoder Bean - sử dụng BCrypt
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
      * Security Filter Chain Configuration
      * Cho phép tất cả requests đến auth endpoints (register, login)
      * Auth service không cần authentication vì nó là service tạo authentication
