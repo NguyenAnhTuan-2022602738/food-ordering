@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final com.foodordering.auth.infrastructure.security.SecurityErrorFilter securityErrorFilter;
 
     /**
      * Security Filter Chain Configuration
@@ -34,6 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(securityErrorFilter, org.springframework.security.web.authentication.logout.LogoutFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/api/auth/**", "/users/**", "/swagger-ui/**", "/api-docs/**", "/actuator/**", "/**").permitAll()
                         .anyRequest().authenticated()

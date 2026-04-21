@@ -21,9 +21,20 @@ export const authService = {
       }
       return response.data
     } catch (error) {
-      const message = error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng thử lại.'
-      console.error('[AUTH-SERVICE] Login error:', message)
-      throw new Error(message)
+      if (error.response) {
+        // Server trả về response lỗi (4xx, 5xx)
+        console.error('[AUTH-SERVICE] Server Error Data:', error.response.data)
+        const message = error.response.data?.message || `Lỗi hệ thống: ${error.response.status}`
+        throw new Error(message)
+      } else if (error.request) {
+        // Request đã gửi nhưng không nhận được phản hồi
+        console.error('[AUTH-SERVICE] No Response:', error.request)
+        throw new Error('Server không phản hồi. Vui lòng kiểm tra kết nối mạng.')
+      } else {
+        // Có lỗi khi thiết lập request
+        console.error('[AUTH-SERVICE] Setup Error:', error.message)
+        throw new Error('Lỗi cấu hình đăng nhập.')
+      }
     }
   },
 

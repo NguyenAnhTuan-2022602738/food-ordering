@@ -60,6 +60,9 @@ public class User {
         if (status == null) {
             status = UserStatus.ACTIVE;
         }
+        if (role == null) {
+            role = UserRole.CUSTOMER;
+        }
         if (loyaltyPoints == null) {
             loyaltyPoints = 0;
         }

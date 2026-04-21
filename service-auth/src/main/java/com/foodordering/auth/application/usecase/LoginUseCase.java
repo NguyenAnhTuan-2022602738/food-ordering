@@ -52,23 +52,26 @@ public class LoginUseCase {
             throw new RuntimeException("Tài khoản đã bị vô hiệu hóa");
         }
 
-        // Tạo JWT token
+        // 4. Kiểm tra Role an toàn
+        String roleName = (user.getRole() != null) ? user.getRole().name() : "CUSTOMER";
+
+        // 5. Tạo JWT token
         String token = jwtService.generateToken(
                 user.getEmail(),
-                user.getRole().name(),
+                roleName,
                 user.getId()
         );
 
         log.info("[LOGIN] Đăng nhập thành công cho user: {} với role: {}", 
-                user.getEmail(), user.getRole());
+                user.getEmail(), roleName);
 
-        // Trả về response
+        // 6. Trả về response
         return AuthResponseDto.fromTokenAndUser(
                 token,
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
-                user.getRole().name()
+                roleName
         );
     }
 }
