@@ -44,7 +44,7 @@ public class User {
     private UserStatus status;
 
     @Builder.Default
-    @Column(name = "loyalty_points", nullable = false, columnDefinition = "int default 0")
+    @Column(name = "loyalty_points", nullable = true, columnDefinition = "int default 0")
     private Integer loyaltyPoints = 0;
 
     @Column(nullable = false, updatable = false)

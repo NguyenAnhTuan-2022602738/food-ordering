@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * Global Exception Handler
  * Chuyển đổi các RuntimeException thành các phản hồi HTTP hợp lệ thay vì lỗi 500 mặc định
  */
-@ControllerAdvice
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
@@ -57,11 +57,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-        log.error("[AUTH-ERROR] Unexpected error: ", ex);
+        log.error("[AUTH-ERROR] CRITICAL ERROR: ", ex); // Log full stack trace for 500 errors
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Đã có lỗi hệ thống xảy ra. Vui lòng thử lại sau.",
+                "Lỗi hệ thống: " + ex.getMessage(),
                 LocalDateTime.now()
         );
 
