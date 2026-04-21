@@ -24,7 +24,7 @@ eureka:
     prefer-ip-address: true
 # SePay / VietQR Configuration
 sepay:
-  bank-account-number: ${SEPAY_BANK_ACCOUNT_NUMBER:}
+  bank-account-number: ${SEPAY_BANK_ACCOUNT_NUMBER:7280010112004}
   bank-code: ${SEPAY_BANK_CODE:MB}
   account-name: ${SEPAY_ACCOUNT_NAME:NGUYEN VAN A}
   api-token: ${SEPAY_API_TOKEN:}
