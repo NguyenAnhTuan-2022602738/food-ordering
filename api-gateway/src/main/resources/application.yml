@@ -9,7 +9,7 @@ spring:
       routes:
         # Auth Service Routes
         - id: service-auth
-          uri: lb://service-auth
+          uri: lb://SERVICE-AUTH
           predicates:
             - Path=/api/auth/**, /api/users/**
           filters:
@@ -17,7 +17,7 @@ spring:
 
         # Menu Service Routes
         - id: service-menu
-          uri: lb://service-menu
+          uri: lb://SERVICE-MENU
           predicates:
             - Path=/api/menu/**, /api/categories/**
           filters:
@@ -25,7 +25,7 @@ spring:
 
         # Order Service Routes
         - id: service-order
-          uri: lb://service-order
+          uri: lb://SERVICE-ORDER
           predicates:
             - Path=/api/orders/**
           filters:
@@ -33,7 +33,7 @@ spring:
 
         # Inventory Service Routes
         - id: service-inventory
-          uri: lb://service-inventory
+          uri: lb://SERVICE-INVENTORY
           predicates:
             - Path=/api/inventory/**, /api/ingredients/**, /api/recipes/**
           filters:
@@ -41,7 +41,7 @@ spring:
 
         # Payment Service Routes
         - id: service-payment
-          uri: lb://service-payment
+          uri: lb://SERVICE-PAYMENT
           predicates:
             - Path=/api/payments/**
           filters:
@@ -49,7 +49,7 @@ spring:
 
         # Notification Service Routes
         - id: service-notification
-          uri: lb://service-notification
+          uri: lb://SERVICE-NOTIFICATION
           predicates:
             - Path=/api/notifications/**
           filters:
@@ -58,7 +58,7 @@ spring:
 
         # Socket Service Routes (SockJS + WebSocket)
         - id: service-socket
-          uri: lb://service-socket
+          uri: lb://SERVICE-SOCKET
           predicates:
             - Path=/ws/**
           filters:
