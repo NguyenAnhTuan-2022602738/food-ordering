@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/apiClient';
 import { X, Star, MessageSquare } from 'lucide-react';
 
 export default function ProductModal({ item, onClose, addToCart }) {
@@ -20,7 +20,7 @@ export default function ProductModal({ item, onClose, addToCart }) {
   const fetchReviews = async () => {
     try {
       setLoadingReviews(true);
-      const res = await axios.get(`/api/menu/reviews/item/${item.id}`);
+      const res = await api.get(`/api/menu/reviews/item/${item.id}`);
       setReviews(res.data || []);
     } catch (err) {
       console.error("Error fetching reviews", err);
@@ -40,7 +40,7 @@ export default function ProductModal({ item, onClose, addToCart }) {
 
     try {
       setSubmitting(true);
-      await axios.post('/api/menu/reviews', 
+      await api.post('/api/menu/reviews', 
         {
           menuItemId: item.id,
           rating,
@@ -48,7 +48,7 @@ export default function ProductModal({ item, onClose, addToCart }) {
         },
         {
           headers: {
-            'X-User-Id': user.id
+            'X-User-Id': user.userId || user.id
           }
         }
       );

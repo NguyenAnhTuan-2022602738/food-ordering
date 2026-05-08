@@ -7,9 +7,16 @@ import toast from 'react-hot-toast'
 export default function ChatBox({ orderId, currentUser, senderName, onClose }) {
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(!!orderId)
   const [isMinimized, setIsMinimized] = useState(false)
   const messagesEndRef = useRef(null)
+
+  useEffect(() => {
+    if (orderId) {
+      setIsOpen(true)
+      setIsMinimized(false)
+    }
+  }, [orderId])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -25,7 +32,7 @@ export default function ChatBox({ orderId, currentUser, senderName, onClose }) {
              // Play sound or show small toast if minimized
           }
         }
-      }, currentUser.userId)
+      }, currentUser.userId || currentUser.id)
 
       return () => {
         // cleanup if needed
@@ -52,7 +59,7 @@ export default function ChatBox({ orderId, currentUser, senderName, onClose }) {
 
     const messageData = {
       orderId: orderId,
-      senderId: currentUser.userId,
+      senderId: currentUser.userId || currentUser.id,
       senderName: senderName || currentUser.fullName || currentUser.email,
       message: newMessage.trim(),
       type: 'CHAT_MESSAGE'
@@ -111,7 +118,7 @@ export default function ChatBox({ orderId, currentUser, senderName, onClose }) {
               </div>
             ) : (
               messages.map((msg, idx) => {
-                const isMe = msg.senderId === currentUser.userId
+                const isMe = msg.senderId === (currentUser.userId || currentUser.id)
                 return (
                   <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                     <span className="text-[10px] text-gray-400 mb-1 px-2">{msg.senderName}</span>
