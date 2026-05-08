@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { orderService } from '../services/orderService'
 
-import { Package, Clock, MapPin, Phone, ChevronRight, ShoppingBag, CheckCircle, Truck, ChefHat, XCircle, AlertCircle, QrCode, X, Copy, Check } from 'lucide-react'
+import { Package, Clock, MapPin, Phone, ChevronRight, ShoppingBag, CheckCircle, Truck, ChefHat, XCircle, AlertCircle, QrCode, X, Copy, Check, MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -20,6 +20,7 @@ export default function MyOrdersPage() {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [paidOrderId, setPaidOrderId] = useState(null)
   const [cancelOrderId, setCancelOrderId] = useState(null)
+  const [activeChatOrderId, setActiveChatOrderId] = useState(null)
 
   useEffect(() => {
     if (user) {
@@ -306,35 +307,48 @@ export default function MyOrdersPage() {
                           </span>
                         </div>
                         
-                        {/* Cancel Button - PENDING or CONFIRMED */}
-                        {['PENDING', 'CONFIRMED'].includes(order.status) && (
-                          <button
-                            onClick={() => handleCancelClick(order.id)}
-                            className="ml-auto px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition-all flex items-center gap-2"
-                          >
-                            <XCircle size={16} /> Hủy đơn
-                          </button>
-                        )}
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap gap-3 ml-auto">
+                          {/* Chat Button - Show for all active orders */}
+                          {['PENDING', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERING'].includes(order.status) && (
+                            <button
+                              onClick={() => setActiveChatOrderId(order.id)}
+                              className="px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg text-xs font-bold hover:bg-gray-50 transition-all flex items-center gap-2"
+                            >
+                              <MessageSquare size={16} className="text-orange-500" /> Nhắn tin hỗ trợ
+                            </button>
+                          )}
 
-                        {/* NÚT XÁC NHẬN ĐÃ NHẬN HÀNG - Chỉ hiển thị khi trạng thái là DELIVERING */}
-                        {order.status === 'DELIVERING' && (
-                          <button
-                            onClick={() => handleConfirmReceipt(order.id)}
-                            className="ml-auto px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-2 animate-bounce-subtle"
-                          >
-                            <CheckCircle size={16} /> Đã nhận được hàng
-                          </button>
-                        )}
+                          {/* Cancel Button - PENDING or CONFIRMED */}
+                          {['PENDING', 'CONFIRMED'].includes(order.status) && (
+                            <button
+                              onClick={() => handleCancelClick(order.id)}
+                              className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition-all flex items-center gap-2"
+                            >
+                              <XCircle size={16} /> Hủy đơn
+                            </button>
+                          )}
 
-                        {/* Pay Now button for unpaid SEPAY orders */}
-                        {order.paymentMethod === 'SEPAY' && order.paymentStatus !== 'SUCCESS' && order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && (
-                          <button
-                            onClick={() => handlePayNow(order)}
-                            className="ml-auto px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-2"
-                          >
-                            💳 Thanh toán ngay
-                          </button>
-                        )}
+                          {/* NÚT XÁC NHẬN ĐÃ NHẬN HÀNG - Chỉ hiển thị khi trạng thái là DELIVERING */}
+                          {order.status === 'DELIVERING' && (
+                            <button
+                              onClick={() => handleConfirmReceipt(order.id)}
+                              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-2 animate-bounce-subtle"
+                            >
+                              <CheckCircle size={16} /> Đã nhận được hàng
+                            </button>
+                          )}
+
+                          {/* Pay Now button for unpaid SEPAY orders */}
+                          {order.paymentMethod === 'SEPAY' && order.paymentStatus !== 'SUCCESS' && order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && (
+                            <button
+                              onClick={() => handlePayNow(order)}
+                              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg text-xs font-bold hover:shadow-lg transition-all flex items-center gap-2"
+                            >
+                              💳 Thanh toán ngay
+                            </button>
+                          )}
+                        </div>
                       </div>
                       
                       {/* Warning for unpaid SEPAY */}
@@ -345,11 +359,6 @@ export default function MyOrdersPage() {
                           </p>
                         </div>
                       )}
-
-                      {/* Chat Box for current order */}
-                      {['CONFIRMED', 'PREPARING', 'READY', 'DELIVERING'].includes(order.status) && (
-                        <ChatBox orderId={order.id} currentUser={user} senderName={user.fullName || user.email} />
-                      )}
                     </div>
                   </div>
                 )
@@ -358,6 +367,16 @@ export default function MyOrdersPage() {
           )}
         </div>
       </div>
+
+      {/* Global Chat Box */}
+      {activeChatOrderId && (
+        <ChatBox 
+          orderId={activeChatOrderId} 
+          currentUser={user} 
+          senderName={user.fullName || user.email}
+          onClose={() => setActiveChatOrderId(null)}
+        />
+      )}
       
       {/* Cancel Confirmation Modal */}
       {cancelOrderId && (

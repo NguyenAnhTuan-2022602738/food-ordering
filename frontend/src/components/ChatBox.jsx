@@ -4,7 +4,7 @@ import { connectSocket } from '../services/socketService'
 import api from '../services/apiClient'
 import toast from 'react-hot-toast'
 
-export default function ChatBox({ orderId, currentUser, senderName }) {
+export default function ChatBox({ orderId, currentUser, senderName, onClose }) {
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
   const [isOpen, setIsOpen] = useState(false)
@@ -95,7 +95,7 @@ export default function ChatBox({ orderId, currentUser, senderName }) {
           <button onClick={(e) => { e.stopPropagation(); setIsMinimized(!isMinimized); }} className="hover:bg-white/20 p-1 rounded-lg transition-colors">
             <Minus size={20} />
           </button>
-          <button onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} className="hover:bg-white/20 p-1 rounded-lg transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); setIsOpen(false); if(onClose) onClose(); }} className="hover:bg-white/20 p-1 rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>

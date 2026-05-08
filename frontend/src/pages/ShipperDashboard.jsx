@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/apiClient'
-import { Package, Truck, CheckCircle, Clock, MapPin, Phone, User as UserIcon, RefreshCcw, Search } from 'lucide-react'
+import { Package, Truck, CheckCircle, Clock, MapPin, Phone, User as UserIcon, RefreshCcw, Search, MessageSquare } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ChatBox from '../components/ChatBox'
 import { OrderSkeleton, CardSkeleton } from '../components/Skeleton'
@@ -12,6 +12,7 @@ export default function ShipperDashboard() {
   const [currentOrders, setCurrentOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('available') // 'available' or 'current'
+  const [activeChatOrderId, setActiveChatOrderId] = useState(null)
 
   const fetchData = async () => {
     setLoading(true)
@@ -171,7 +172,7 @@ export default function ShipperDashboard() {
           ) : (
             currentOrders.length > 0 ? (
               currentOrders.map(order => (
-                <OrderCard key={order.id} order={order} type="current" onAction={handleDeliver} />
+                <OrderCard key={order.id} order={order} type="current" onAction={handleDeliver} onChat={() => setActiveChatOrderId(order.id)} />
               ))
             ) : (
                 <EmptyState icon={<Truck size={48} />} title="Bạn chưa nhận đơn nào" subtitle="Chuyển sang tab Đơn hàng mới để nhận chuyến giao đầu tiên!" />
@@ -179,11 +180,21 @@ export default function ShipperDashboard() {
           )}
         </div>
       </div>
+
+      {/* Global Chat Box */}
+      {activeChatOrderId && (
+        <ChatBox 
+          orderId={activeChatOrderId} 
+          currentUser={user} 
+          senderName="Shipper" 
+          onClose={() => setActiveChatOrderId(null)}
+        />
+      )}
     </div>
   )
 }
 
-function OrderCard({ order, type, onAction }) {
+function OrderCard({ order, type, onAction, onChat }) {
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
       <div className="p-6">
@@ -216,7 +227,14 @@ function OrderCard({ order, type, onAction }) {
         <div className="border-t border-gray-50 pt-4 flex flex-col gap-3">
            <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-gray-500">Số món: {order.items?.length || 0}</span>
-              <button className="text-xs text-blue-500 font-bold hover:underline">Chi tiết đơn</button>
+              {type === 'current' && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onChat(); }}
+                  className="text-xs text-orange-500 font-bold flex items-center gap-1 hover:underline"
+                >
+                  <MessageSquare size={14} /> Nhắn tin khách
+                </button>
+              )}
            </div>
            
            <button 
@@ -226,11 +244,6 @@ function OrderCard({ order, type, onAction }) {
              {type === 'ready' ? 'Bắt đầu giao hàng' : 'Xác nhận đã giao'}
            </button>
         </div>
-
-        {/* Chat for current deliveries */}
-        {type === 'current' && (
-          <ChatBox orderId={order.id} currentUser={{userId: order.shipperId}} senderName="Shipper" />
-        )}
       </div>
     </div>
   )
